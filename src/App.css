@@ -1,9 +1,38 @@
+.App {
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 100vh;
+  height: 100%;
+}
+
 .App-header {
-  background-color: #282c34;
+  background-color: var(--header-and-footer);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  font-size: calc(8px + 1vmin);
+  padding: 1%;
+  color: #fff;
+  width: 100%;
+}
+
+#title {
+  margin: 0;
+}
+
+.App-content {
+  font-family: 'Lora', serif;
+}
+
+.App-footer {
+  color: #fff;
+  padding: 1%;
+  align-self: flex-end;
+  background-color: var(--header-and-footer);
+}
+
+.App-footer #github {
+  color: #fff;
+  text-decoration: none;
 }
