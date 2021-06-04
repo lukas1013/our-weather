@@ -3,6 +3,7 @@
   flex-wrap: wrap;
   min-height: 100vh;
   height: 100%;
+  justify-content: center;
 }
 
 .App-header {
@@ -21,7 +22,79 @@
   margin: 0;
 }
 
+#local-and-time {
+  margin: 10% 0;
+  align-self: center;
+  width: 50%;
+  text-align: center;
+}
+
+#local-and-time time {
+  font-size: 90%;
+}
+
 .App-content {
+  font-family: 'Lora', serif;
+  display: grid;
+  grid-template: 
+    "weather dg hu" 2rem
+    "weather de wi" 2rem
+    / 1fr 2fr 2fr;
+  width: 86%;
+  height: 5rem;
+  color: #fff;
+  background-color: var(--secondary-color);
+  border-radius: .3rem;
+  font-size: .9rem;
+  text-align: left;
+  box-shadow: 0 1px 3px rgba(0,0,0,.4);
+  align-content: center;
+}
+
+.App-content #weather {
+  grid-area: weather;
+  width: 90%;
+  height: 90%;
+}
+
+#degrees {
+  grid-area: dg;
+  align-self: flex-end;
+}
+
+#desc {
+  grid-area: de;
+  align-self: center;
+}
+
+#humidity {
+  grid-area: hu;
+  align-self: flex-end;
+}
+
+#wind {
+  grid-area: wi;
+}
+
+#week {
+  
+}
+
+#change-location {
+  margin-bottom: 2%;
+  color: var(--primary-color);
+  text-decoration: underline var(--primary-color) 2px;
+  width: 80%;
+  text-align: center;
+}
+
+#address-ipt {
+  margin-bottom: 5%;
+  align-self: center;
+  padding: 1%;
+  outline: none;
+  border: .1em solid var(--primary-color);
+  border-radius: .3rem;
   font-family: 'Lora', serif;
 }
 
@@ -30,6 +103,7 @@
   padding: 1%;
   align-self: flex-end;
   background-color: var(--header-and-footer);
+  width: 100%;
 }
 
 .App-footer #github {
