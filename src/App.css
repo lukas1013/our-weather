@@ -40,21 +40,26 @@
     "weather dg hu" 2rem
     "weather de wi" 2rem
     / 1fr 2fr 2fr;
-  width: 86%;
-  height: 5rem;
+  width: 76%;
+  height: 4rem;
   color: #fff;
-  background-color: var(--secondary-color);
+  /* background-color: var(--secondary-color); */
+  background-image: linear-gradient(to bottom right, var(--primary-color), var(--secondary-color));
   border-radius: .3rem;
-  font-size: .9rem;
+  font-size: .8rem;
   text-align: left;
   box-shadow: 0 1px 3px rgba(0,0,0,.4);
-  align-content: center;
+  justify-items: center;
+  padding: 1%;
 }
 
 .App-content #weather {
   grid-area: weather;
   width: 90%;
   height: 90%;
+  box-sizing: border-box;
+  align-self: center;
+  object-fit: contain;
 }
 
 #degrees {
@@ -74,18 +79,82 @@
 
 #wind {
   grid-area: wi;
+  align-self: center;
 }
 
 #week {
-  
+  margin: 10% 0 8%;
+  width: 90%;
+  box-shadow: 0 0 4px rgba(0,0,0,.4);
+  box-sizing: border-box;
+  border-radius: .3rem;
+  overflow: hidden;
+  text-align: center;
+  background-color: var(--secondary-color);
+}
+
+#week-content {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: 1fr 1.5fr 1fr;
+  justify-items: center;
+  box-sizing: border-box;
+  color: #fff;
+}
+
+#week-content .day {
+  font-weight: 500;
+  width: 100%;
+  grid-row-start: 1;
+  box-sizing: border-box;
+  line-height: 2em;
+  font-weight: 600;
+}
+
+#week-content .weather-container {
+  grid-row-start: 2;
+  width: 3rem;
+  height: 3rem;
+  margin: 0;
+  align-self: end;
+}
+
+#week-content .weather {  
+  object-fit: contain;
+  box-sizing: border-box;
+  width: 80%;
+  height: 80%;
+  margin-top: .3rem;
+}
+
+#week-content .degrees {
+  grid-row-start: 3;
+  width: 100%;
+  line-height: 2em;
+  align-self: end;
+  font-size: .9rem;
 }
 
 #change-location {
   margin-bottom: 2%;
   color: var(--primary-color);
   text-decoration: underline var(--primary-color) 2px;
-  width: 80%;
   text-align: center;
+  background-color: var(--primary-color);
+  color: #fff;
+  align-self: center;
+  padding: 1%;
+  border-radius: .3rem;
+  width: 50%;
+}
+
+#change-location:hover {
+  transition: background-color .3s, color .3s, font-weight .3s;
+  color: var(--primary-color);
+  background-color: transparent;
+  text-decoration: none;
+  font-weight: bold;
 }
 
 #address-ipt {
@@ -93,9 +162,10 @@
   align-self: center;
   padding: 1%;
   outline: none;
-  border: .1em solid var(--primary-color);
-  border-radius: .3rem;
+  border: none;
+  border-bottom: .1em solid var(--primary-color);
   font-family: 'Lora', serif;
+  width: 50%;
 }
 
 .App-footer {
