@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import getIcon from './getIcon';
 
-export default function WeatherIcon(props) {
+function WeatherIcon(props) {
     const [iconSrc, setIconSrc] = useState('');
     
     useEffect(() => {
@@ -10,3 +10,5 @@ export default function WeatherIcon(props) {
 
     return <img id={props.id} className={props.className} src={iconSrc} alt="" title={props.title} />
 }
+
+export default memo(WeatherIcon);
