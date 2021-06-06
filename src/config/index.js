@@ -8,6 +8,10 @@ const config = {
             api: 'http://api.positionstack.com/v1/reverse',
             access_key: process.env.REACT_APP_REVERSE_API_KEY
         }
+    },
+    weather: {
+        api: 'https://api.openweathermap.org/data/2.5/onecall',
+        appid: process.env.REACT_APP_WEATHER_APPID
     }
 }
 
