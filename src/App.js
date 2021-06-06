@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, Fragment } from 'react';
+import { useState, useEffect, useMemo, Fragment, useRef } from 'react';
 import * as geocodeApi from './services/geocode';
 import * as weatherApi from './services/weather';
 import WeatherIcon from './components/WeatherIcon/';
@@ -27,6 +27,8 @@ function App() {
     return w
   }, [today, days]);
   const [weekWeather, setWeekWeather] = useState([{}]);
+  const changeLocationRef = useRef(null);
+  const [isChangingLocation,setIsChangingLocation] = useState(false);
 
   useEffect(() => {
     if ('geolocation' in navigator && !sessionStorage.getItem('address')) {
@@ -91,9 +93,32 @@ function App() {
         </div>
       </article>
 
-      <label htmlFor="address-ipt" id="change-location">Change location</label>
+      <label htmlFor="address-ipt" id="change-location" onClick={() => setIsChangingLocation(!isChangingLocation)}>Change location</label>
 
-      <input id="address-ipt" placeholder="Albany, NY" name="address"/>
+      <input 
+        ref={changeLocationRef} 
+        onBlur={() => setIsChangingLocation(false)} 
+        onKeyDown={e => { 
+          const inputAddress = changeLocationRef.current.value
+          if (e.code === "Enter" && inputAddress.match(/^[[a-z\sáàãâçéèẽêíìîóòôúù]+[,\s]?[a-z]{2}?/i)) { 
+            console.log('Matched')
+            geocodeApi.getGeocode(inputAddress.replace(/[\s,]/g, '+')).then(response => {
+              const [ coords, address ] = response;
+              console.log(address)
+              return weatherApi.getLocalizationWeather(coords, lang).then(weWeather => {
+                sessionStorage.setItem('address', `${address.city}, ${address.stateCode}`)
+                setWeekWeather(weWeather)
+                return address
+              })
+            }).then(address => {
+              setLocalization(`${address.city}, ${address.stateCode || address.countryCode}`);
+            })
+
+            setIsChangingLocation(false)
+          }
+        }}
+        style={{ display: isChangingLocation ? "initial" : "none" }} 
+        placeholder="Albany, NY" name="address" id="address-ipt" />
 
       <footer className="App-footer">
         <a href="github.com/" id="github">
