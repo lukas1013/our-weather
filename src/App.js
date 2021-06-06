@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, Fragment, useRef } from 'react';
+import { useState, useEffect, useMemo, Fragment, useRef, useCallback } from 'react';
 import * as geocodeApi from './services/geocode';
 import * as weatherApi from './services/weather';
 import WeatherIcon from './components/WeatherIcon/';
@@ -29,6 +29,11 @@ function App() {
   const [weekWeather, setWeekWeather] = useState([{}]);
   const changeLocationRef = useRef(null);
   const [isChangingLocation,setIsChangingLocation] = useState(false);
+  const clock = useCallback(() => {
+    return setInterval(() => {
+      setTime(new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' }).format(new Date()))
+    }, 1000);
+  }, []);
 
   useEffect(() => {
     if ('geolocation' in navigator && !sessionStorage.getItem('address')) {
@@ -46,6 +51,10 @@ function App() {
       setWeekWeather(weWeather)
     }).catch(e => console.log(e))
   }, [lang])
+
+  useEffect(() => {
+    clock()
+  }, [clock])
 
   return (
     <div className="App">
