@@ -130,7 +130,7 @@ function App() {
         placeholder="Albany, NY" name="address" id="address-ipt" />
 
       <footer className="App-footer">
-        <a href="github.com/" id="github">
+        <a href="https://github.com/lukas1013/our-weather" target="_blank" rel="noopener" id="github">
           Github
         </a>
       </footer>
