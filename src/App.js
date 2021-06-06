@@ -1,10 +1,32 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, Fragment } from 'react';
 import * as geocodeApi from './services/geocode';
+import * as weatherApi from './services/weather';
+import WeatherIcon from './components/WeatherIcon/';
 import './App.css';
 
 function App() {
   const [localization, setLocalization] = useState(sessionStorage.getItem('address'));
   const [time, setTime] = useState(new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' }).format(new Date()));
+  const days = useMemo(() => ['Sunday','Monday','Tuesday','Wednesday','Thusday','Friday','Saturday'],[]);
+  const [today, setToday] = useState(days[new Date().getDay()]);
+  const lang = useMemo(() => {
+    const navLang = navigator.language
+
+    //formating for the API
+    return navLang.slice(0,2) + '_' + navLang.slice(-2).toUpperCase()
+  }, []);
+  const week = useMemo(() => {
+    const w = []
+
+    if (today === 'Saturday') {
+      w.push(...days)
+    } else {
+      w.push(...(days.splice(days.indexOf(today)+1).concat(days)))
+    }
+
+    return w
+  }, [today, days]);
+  const [weekWeather, setWeekWeather] = useState([{}]);
 
   useEffect(() => {
     if ('geolocation' in navigator && !sessionStorage.getItem('address')) {
@@ -15,6 +37,13 @@ function App() {
       })
     } 
   }, [])
+
+  useEffect(() => {
+    const latitude = sessionStorage.getItem('lat'), longitude = sessionStorage.getItem('long');
+    weatherApi.getWeekWeather({latitude,longitude}, lang).then(weWeather => {
+      setWeekWeather(weWeather)
+    }).catch(e => console.log(e))
+  }, [lang])
 
   return (
     <div className="App">
@@ -27,28 +56,38 @@ function App() {
       </h2>
 
       <main className="App-content">
-        *weather icon*
+        <WeatherIcon id="weather" icon={weekWeather[0].icon} iconId={weekWeather[0].iconId} />
 
         <span id="degrees">
-          70 °C | 8001 °F
+          {weekWeather[0].temp}
         </span>
 
         <span id="desc">
-          Hail
+          {weekWeather[0].desc}
         </span>
 
         <span id="humidity">
-          50%
+          Humidity: {weekWeather[0].humidity}
         </span>
 
         <span id="wind">
-          10 Km/h
+          Wind: {weekWeather[0].wind}
         </span>
       </main>
       
       <article id="week">
         <div id="week-content">
-          
+          { 
+            weekWeather.slice(1).map((item, key) => (
+              <Fragment key={key}>
+                <span className="day">{week[key]}</span>
+                <figure className="weather-container">
+                  <WeatherIcon className="weather" title={item.desc} icon={item.icon} iconId={item.iconId} />
+                </figure>
+                <span className="degrees">{item.temp ?? ''}</span>
+              </Fragment>
+            )) 
+          }
         </div>
       </article>
 
