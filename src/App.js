@@ -6,18 +6,17 @@ import './App.css';
 
 function App() {
   const [localization, setLocalization] = useState(sessionStorage.getItem('address'));
+  const [coordinates, setCoordinates] = useState(JSON.parse(sessionStorage.getItem('coords')));
   const [time, setTime] = useState(new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' }).format(new Date()));
   const days = useMemo(() => ['Sunday','Monday','Tuesday','Wednesday','Thusday','Friday','Saturday'],[]);
   const [today, setToday] = useState(days[new Date().getDay()]);
   const lang = useMemo(() => {
     const navLang = navigator.language
-
     //formating for the API
     return navLang.slice(0,2) + '_' + navLang.slice(-2).toUpperCase()
   }, []);
   const week = useMemo(() => {
     const w = []
-
     if (today === 'Saturday') {
       w.push(...days)
     } else {
@@ -36,21 +35,23 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if ('geolocation' in navigator && !sessionStorage.getItem('address')) {
+    if ('geolocation' in navigator && !localization) {
       navigator.geolocation.getCurrentPosition(({ coords }) => {
-        geocodeApi.getReverseGeocode(coords).then(address => 
-          setLocalization(address)).catch(err =>
+        const { latitude, longitude } = coords
+        geocodeApi.getReverseGeocode({latitude, longitude}).then(address => 
+          setLocalization(address)).then(() => {
+            setCoordinates(JSON.parse(sessionStorage.getItem('coords')))
+          }).catch(err =>
             console.log(err.message))
       })
-    } 
-  }, [])
+    }
+  }, [localization])
 
   useEffect(() => {
-    const latitude = sessionStorage.getItem('lat'), longitude = sessionStorage.getItem('long');
-    weatherApi.getWeekWeather({latitude,longitude}, lang).then(weWeather => {
+    weatherApi.getWeekWeather(coordinates, lang).then(weWeather => {
       setWeekWeather(weWeather)
     }).catch(e => console.log(e))
-  }, [lang])
+  }, [coordinates,lang])
 
   useEffect(() => {
     clock()
