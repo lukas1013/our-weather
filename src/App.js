@@ -111,12 +111,11 @@ function App() {
         onKeyDown={e => { 
           const inputAddress = changeLocationRef.current.value
           if (e.code === "Enter" && inputAddress.match(/^[[a-z\sáàãâçéèẽêíìîóòôúù]+[,\s]?[a-z]{2}?/i)) { 
-            console.log('Matched')
             geocodeApi.getGeocode(inputAddress.replace(/[\s,]/g, '+')).then(response => {
               const [ coords, address ] = response;
-              console.log(address)
               return weatherApi.getLocalizationWeather(coords, lang).then(weWeather => {
-                sessionStorage.setItem('address', `${address.city}, ${address.stateCode}`)
+                sessionStorage.setItem('address', `${address.city}, ${address.stateCode || address.countryCode}`)
+                sessionStorage.setItem('coords', JSON.stringify(coords))
                 setWeekWeather(weWeather)
                 return address
               })

@@ -7,7 +7,12 @@ async function getGeocode(address) {
     const API_KEY = config.geocoding.geocode.api_key;
 
     return await axios.get(`${URL + address}&apikey=${API_KEY}`).then(function ({ data }) {
-        return [data.items[0].position, data.items[0].address]
+        const resposeAddress = data.items[0].address
+        const coords = {
+            latitude: data.items[0].position.lat,
+            longitude: data.items[0].position.lng
+        }
+        return [coords, resposeAddress]
     }).catch(err => console.log(err.message));
 }
 
