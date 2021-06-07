@@ -14,7 +14,7 @@ async function getGeocode(address) {
 async function getReverseGeocode(coords) {
     const URL = config.geocoding.reverse.api;
     const ACCESS_KEY = config.geocoding.reverse.access_key;
-console.log(config)
+    
     return await axios.get(URL, {
         params: {
            access_key: ACCESS_KEY,
@@ -27,8 +27,7 @@ console.log(config)
             const address = `${data.county}, ${data.region_code}`;
             try {
                 sessionStorage.setItem('address', address)
-                sessionStorage.setItem('lat', coords.latitude)
-                sessionStorage.setItem('long', coords.longitude)
+                sessionStorage.setItem('coords', JSON.stringify(coords))
                 return address
             } catch (e) {
                 console.log(e.message)

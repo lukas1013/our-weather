@@ -7,6 +7,10 @@ async function getWeekWeather(coords, lang = 'en_US') {
     const URL = config.weather.api;
     const APPID = config.weather.appid;
 
+    if (!coords.latitude) {
+        return [{}]
+    }
+
     function captalize(string) {
         const firstLetter = string.charAt(0)
         return string.replace(firstLetter, firstLetter.toUpperCase())
@@ -53,9 +57,8 @@ async function getWeekWeather(coords, lang = 'en_US') {
     })
 }
 
-async function getLocalizationWeather({ lat, lng }, lang = 'en_US') {
-    const coords = { latitude: lat, longitude: lng }
-
+async function getLocalizationWeather(coords, lang = 'en_US') {
+    
     try {
         const weWeather = await getWeekWeather(coords, lang);
         return weWeather
