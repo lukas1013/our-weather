@@ -130,6 +130,17 @@ function App() {
         style={{ display: isChangingLocation ? "initial" : "none" }} 
         placeholder="Albany, NY" name="address" id="address-ipt" />
 
+      <span id="icon-author" title="Freepik">
+        Icons made by&nbsp;
+        <a href="https://www.freepik.com" title="Freepik" target="_blank" rel="noopener noreferrer">
+          Freepik&nbsp;
+        </a> 
+        from&nbsp;
+        <a href="https://www.flaticon.com/" target="_blank" rel="noopener noreferrer" title="Flaticon">
+          www.flaticon.com
+        </a>
+      </span>
+
       <footer className="App-footer">
         <a href="https://github.com/lukas1013/our-weather" target="_blank" rel="noopener" id="github">
           Github

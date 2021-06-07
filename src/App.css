@@ -168,6 +168,13 @@
   width: 50%;
 }
 
+#icon-author {
+  font-size: .8rem;
+  width: 80%;
+  text-align: center;
+  margin: 5%;
+}
+
 .App-footer {
   color: #fff;
   padding: 1%;
