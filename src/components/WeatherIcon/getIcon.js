@@ -10,7 +10,6 @@ export default async function getIcon(iconId, api_icon) {
     }
 
     try {
-        console.log(id)
         const src = await import('../../assets/' + ICONS[id])
         return src.default
     } catch(err) {
