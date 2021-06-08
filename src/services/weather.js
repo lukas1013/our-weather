@@ -35,7 +35,8 @@ async function getWeekWeather(coords, lang = 'en_US') {
             weather: current.weather[0].main,
             desc: (() => captalize(current.weather[0].description))(),
             iconId: current.weather[0].id,
-            icon: current.weather[0].icon
+            icon: current.weather[0].icon,
+            timeZone: data.timezone
         }];
 
         let period = getDayPeriod(new Date())

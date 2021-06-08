@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, Fragment, useRef, useCallback } from 'react';
+import ISO6391 from 'iso-639-1';
 import * as geocodeApi from './services/geocode';
 import * as weatherApi from './services/weather';
 import WeatherIcon from './components/WeatherIcon/';
@@ -7,7 +8,8 @@ import './App.css';
 function App() {
   const [localization, setLocalization] = useState(sessionStorage.getItem('address'));
   const [coordinates, setCoordinates] = useState(JSON.parse(sessionStorage.getItem('coords')));
-  const [time, setTime] = useState(new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' }).format(new Date()));
+  const timezone = useMemo(() => sessionStorage.getItem('timeZone'), []);
+  const [time, setTime] = useState(new Intl.DateTimeFormat(sessionStorage.getItem('lang') || navigator.language, timezone ? { hour: '2-digit', minute: '2-digit', timeZone: timezone } : { hour: '2-digit', minute: '2-digit'}).format(new Date()));
   const days = useMemo(() => ['Sunday','Monday','Tuesday','Wednesday','Thusday','Friday','Saturday'],[]);
   const [today, setToday] = useState(days[new Date().getDay()]);
   const lang = useMemo(() => {
@@ -30,7 +32,14 @@ function App() {
   const [isChangingLocation,setIsChangingLocation] = useState(false);
   const clock = useCallback(() => {
     return setInterval(() => {
-      setTime(new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' }).format(new Date()))
+      const locale = sessionStorage.getItem('lang'), timeZone = sessionStorage.getItem('timeZone');
+      const options = { hour: '2-digit', minute: '2-digit' }
+      
+      if (timeZone) {
+        options.timeZone = timeZone
+      }
+
+      setTime(new Intl.DateTimeFormat(locale || navigator.language, options).format(new Date()))
     }, 1000);
   }, []);
 
@@ -116,6 +125,8 @@ function App() {
               return weatherApi.getLocalizationWeather(coords, lang).then(weWeather => {
                 sessionStorage.setItem('address', `${address.city}, ${address.stateCode || address.countryCode}`)
                 sessionStorage.setItem('coords', JSON.stringify(coords))
+                sessionStorage.setItem('lang', ISO6391.getCode(address.city))
+                sessionStorage.setItem('timeZone', weWeather[0].timeZone);
                 setWeekWeather(weWeather)
                 return address
               })
