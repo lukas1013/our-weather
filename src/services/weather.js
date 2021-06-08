@@ -7,7 +7,7 @@ async function getWeekWeather(coords, lang = 'en_US') {
     const URL = config.weather.api;
     const APPID = config.weather.appid;
 
-    if (!coords.latitude) {
+    if (!coords?.latitude) {
         return [{}]
     }
 
