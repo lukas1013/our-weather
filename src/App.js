@@ -116,7 +116,7 @@ function App() {
       </h2>
 
       <main className="App-content">
-        <WeatherIcon id="weather" icon={weekWeather[0].icon} iconId={weekWeather[0].iconId} />
+        {weekWeather[0].icon &&  <WeatherIcon id="weather" icon={weekWeather[0].icon} iconId={weekWeather[0].iconId} />}
 
         <span id="degrees">
           {weekWeather[0].temp}
@@ -137,12 +137,12 @@ function App() {
       
       <article id="week">
         <div id="week-content">
-          { 
+          {
             weekWeather.slice(1).map((item, key) => (
               <Fragment key={key}>
                 <span className="day">{week[key]}</span>
                 <figure className="weather-container">
-                  <WeatherIcon className="weather" title={item.desc} icon={item.icon} iconId={item.iconId} />
+                  {item.icon && <WeatherIcon className="weather" title={item.desc} icon={item.icon} iconId={item.iconId} />}
                 </figure>
                 <span className="degrees">{item.temp ?? ''}</span>
               </Fragment>
@@ -172,7 +172,7 @@ function App() {
       </span>
 
       <footer className="App-footer">
-        <a href="https://github.com/lukas1013/our-weather" target="_blank" rel="noopener" id="github">
+        <a href="https://github.com/lukas1013/our-weather" target="_blank" rel="noopener noreferrer" id="github">
           Github
         </a>
       </footer>
