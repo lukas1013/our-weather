@@ -27,7 +27,7 @@ function App() {
 
     return w
   }, [today, days]);
-  const [weekWeather, setWeekWeather] = useState([{}]);
+  const [weekWeather, setWeekWeather] = useState(JSON.parse(sessionStorage.getItem('weather')) || [{}]);
   const changeLocationRef = useRef(null);
   const [isChangingLocation,setIsChangingLocation] = useState(false);
   const clock = useCallback(() => {
