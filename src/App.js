@@ -42,25 +42,58 @@ function App() {
       setTime(new Intl.DateTimeFormat(locale || navigator.language, options).format(new Date()))
     }, 1000);
   }, []);
-
-  useEffect(() => {
-    if ('geolocation' in navigator && !localization) {
+  const setBrowserLocation = useCallback(() => {
+    if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(({ coords }) => {
         const { latitude, longitude } = coords
-        geocodeApi.getReverseGeocode({latitude, longitude}).then(address => 
-          setLocalization(address)).then(() => {
-            setCoordinates(JSON.parse(sessionStorage.getItem('coords')))
-          }).catch(err =>
-            console.log(err.message))
+        sessionStorage.setItem('coords', JSON.stringify(coords))
+        setCoordinates(coords)
+        return geocodeApi.getReverseGeocode({latitude, longitude}).then(address => {
+          sessionStorage.setItem('address', address)
+          setLocalization(address)
+        }).catch(err => console.log(err.message))
       })
     }
-  }, [localization])
+  }, []);
+  const changeLocation = useCallback(e => {
+      const inputAddress = changeLocationRef.current.value
+      if (e.code === "Enter" && inputAddress.match(/^[[a-z\sáàãâçéèẽêíìîóòôúù]+[,\s]?[a-z]{2}?/i)) { 
+        geocodeApi.getGeocode(inputAddress.replace(/[\s,]/g, '+')).then(response => {
+          const [ coords, address ] = response;
+          return weatherApi.getLocalizationWeather(coords, lang).then(weWeather => {
+            sessionStorage.setItem('address', `${address.city}, ${address.stateCode || address.countryCode}`)
+            sessionStorage.setItem('coords', JSON.stringify(coords))
+            sessionStorage.setItem('lang', ISO6391.getCode(address.city || address.state))
+            sessionStorage.setItem('timeZone', weWeather[0].timeZone);
+            sessionStorage.setItem('weather', JSON.stringify(weWeather));
+            setWeekWeather(weWeather)
+            return address
+          })
+        }).then(address => {
+          setLocalization(`${address.city}, ${address.stateCode || address.countryCode}`);
+        })
+
+        setIsChangingLocation(false)
+      }
+  }, [lang]);
+  const getWeekWeather = useCallback(async () => {
+    return await weatherApi.getWeekWeather(coordinates, lang).then(weWeather => {
+      sessionStorage.setItem('weather', JSON.stringify(weWeather))
+      return weWeather
+    }).catch(e => console.log(e))
+  },[coordinates, lang]);
 
   useEffect(() => {
-    weatherApi.getWeekWeather(coordinates, lang).then(weWeather => {
-      setWeekWeather(weWeather)
-    }).catch(e => console.log(e))
-  }, [coordinates,lang])
+    if (!localization) {
+      return setBrowserLocation()
+    }
+  }, [localization, setBrowserLocation])
+
+  useEffect(() => {
+    if (!weekWeather[0].temp) {
+      return getWeekWeather().then(weWeather => setWeekWeather(weWeather))
+    }
+  }, [weekWeather,getWeekWeather])
 
   useEffect(() => {
     clock()
@@ -123,26 +156,7 @@ function App() {
       <input 
         ref={changeLocationRef} 
         onBlur={() => setIsChangingLocation(false)} 
-        onKeyDown={e => { 
-          const inputAddress = changeLocationRef.current.value
-          if (e.code === "Enter" && inputAddress.match(/^[[a-z\sáàãâçéèẽêíìîóòôúù]+[,\s]?[a-z]{2}?/i)) { 
-            geocodeApi.getGeocode(inputAddress.replace(/[\s,]/g, '+')).then(response => {
-              const [ coords, address ] = response;
-              return weatherApi.getLocalizationWeather(coords, lang).then(weWeather => {
-                sessionStorage.setItem('address', `${address.city}, ${address.stateCode || address.countryCode}`)
-                sessionStorage.setItem('coords', JSON.stringify(coords))
-                sessionStorage.setItem('lang', ISO6391.getCode(address.city))
-                sessionStorage.setItem('timeZone', weWeather[0].timeZone);
-                setWeekWeather(weWeather)
-                return address
-              })
-            }).then(address => {
-              setLocalization(`${address.city}, ${address.stateCode || address.countryCode}`);
-            })
-
-            setIsChangingLocation(false)
-          }
-        }}
+        onKeyDown={e => changeLocation(e)}
         style={{ display: isChangingLocation ? "initial" : "none" }} 
         placeholder="Albany, NY" name="address" id="address-ipt" />
 
