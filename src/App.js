@@ -22,7 +22,7 @@ function App() {
     if (today === 'Saturday') {
       w.push(...days)
     } else {
-      w.push(...(days.splice(days.indexOf(today)+1).concat(days)))
+      w.push(...([...days].splice(days.indexOf(today)+1).concat(days)))
     }
 
     return w
@@ -65,6 +65,12 @@ function App() {
   useEffect(() => {
     clock()
   }, [clock])
+
+  useEffect(() => {
+    if (time === '00:00') {
+      setToday(days[days.indexOf(today) + 1])
+    }
+  }, [time, days, today])
 
   return (
     <div className="App">
