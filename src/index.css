@@ -1,8 +1,9 @@
 :root {
-  --primary-color: #E51A4C;
+  --primary-color: #988BDA;
   --secondary-color: #24B0F8;
   --header-and-footer: #282c34;
   --text-color: #49505E;
+  --button-color: #E51A4C;
 }
 
 body {
@@ -19,4 +20,8 @@ h2 {
   margin: 0;
   font-size: 1.3rem;
   font-weight: 500;
+}
+
+a, a:visited {
+  color: #E51A4C;
 }
