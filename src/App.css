@@ -35,6 +35,7 @@
 
 .App-content {
   font-family: 'Lora', serif;
+  background-color: var(--primary-color);
   display: grid;
   grid-template: 
     "weather dg hu" 2rem
@@ -43,8 +44,6 @@
   width: 76%;
   height: 4rem;
   color: #fff;
-  /* background-color: var(--secondary-color); */
-  background-image: linear-gradient(to bottom right, var(--primary-color), var(--secondary-color));
   border-radius: .3rem;
   font-size: .8rem;
   text-align: left;
@@ -100,6 +99,7 @@
   grid-template-rows: 1fr 1.5fr 1fr;
   justify-items: center;
   box-sizing: border-box;
+  background-color: var(--secondary-color);
   color: #fff;
 }
 
@@ -141,8 +141,9 @@
   color: var(--primary-color);
   text-decoration: underline var(--primary-color) 2px;
   text-align: center;
-  background-color: var(--primary-color);
+  background-color: var(--button-color);
   color: #fff;
+  text-decoration: underline #E51A4C;
   align-self: center;
   padding: 1%;
   border-radius: .3rem;
@@ -151,8 +152,9 @@
 
 #change-location:hover {
   transition: background-color .3s, color .3s, font-weight .3s;
-  color: var(--primary-color);
   background-color: transparent;
+  color: #E51A4C;
+  box-shadow: none;
   text-decoration: none;
   font-weight: bold;
 }
@@ -163,9 +165,12 @@
   padding: 1%;
   outline: none;
   border: none;
-  border-bottom: .1em solid var(--primary-color);
-  font-family: 'Lora', serif;
-  width: 50%;
+  border-bottom: .1rem solid #E51A4C;
+  line-height: 3rem;
+  color: var(--text-color);
+  font-family: 'Mukta', serif;
+  font-size: 1.4rem;
+  width: 40%;
 }
 
 #icon-author {
@@ -184,6 +189,5 @@
 }
 
 .App-footer #github {
-  color: #fff;
-  text-decoration: none;
+  color: inherit;
 }
