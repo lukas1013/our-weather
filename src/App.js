@@ -57,7 +57,8 @@ function App() {
   }, []);
   const changeLocation = useCallback(e => {
       const inputAddress = changeLocationRef.current.value
-      if (e.code === "Enter" && inputAddress.match(/^[[a-z\sáàãâçéèẽêíìîóòôúù]+[,\s]?[a-z]{2}?/i)) { 
+      
+      if (e.key === "Enter" && inputAddress.match(/^[[a-z\sáàãâçéèẽêíìîóòôúù]+[,\s]?[a-z]{2}?/i)) { 
         geocodeApi.getGeocode(inputAddress.replace(/[\s,]/g, '+')).then(response => {
           const [ coords, address ] = response;
           return weatherApi.getLocalizationWeather(coords, lang).then(weWeather => {
