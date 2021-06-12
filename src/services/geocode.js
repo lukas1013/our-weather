@@ -4,7 +4,7 @@ import config from '../config/';
 
 async function getGeocode(address) {
     const URL = config.geocoding.geocode.api;
-    const API_KEY = config.geocoding.geocode.api_key;
+    const API_KEY = config.geocoding.api_key;
 
     return await axios.get(`${URL + address}&apikey=${API_KEY}`).then(function ({ data }) {
         const resposeAddress = data.items[0].address
@@ -18,25 +18,23 @@ async function getGeocode(address) {
 
 async function getReverseGeocode(coords) {
     const URL = config.geocoding.reverse.api;
-    const ACCESS_KEY = config.geocoding.reverse.access_key;
+    const APIKEY = config.geocoding.api_key;
     
     return await axios.get(URL, {
         params: {
-           access_key: ACCESS_KEY,
-           query: `${coords.latitude}, ${coords.longitude}`,
-           limit: 1
+           at: `${coords.latitude},${coords.longitude}`,
+           limit: 1,
+           apikey: APIKEY
         },
-    }).then(({ statusText, data: responseData }) => {
-        const [data] = responseData.data
-        if (statusText === "OK") {
-            const address = `${data.county}, ${data.region_code}`;
-            try {
-                sessionStorage.setItem('address', address)
-                sessionStorage.setItem('coords', JSON.stringify(coords))
-                return address
-            } catch (e) {
-                console.log(e.message)
-            }
+    }).then(({ data }) => {
+        const { address: responseAddress } = data.items[0]
+        const address = responseAddress.city + ', ' + responseAddress.state
+        try {
+            sessionStorage.setItem('address', address)
+            sessionStorage.setItem('coords', JSON.stringify(coords))
+            return address
+        } catch (e) {
+            console.log(e.message)
         }
     }).catch(err => console.log(err.message))
 }
