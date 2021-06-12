@@ -21,38 +21,39 @@
   font-size: 2.8rem;
 }
 
-#local-and-time {
-  align-self: center;
-  font-size: 1.8rem;
-  font-weight: 600;
-  font-family: 'Lora', serif;
-  margin: 10% 0;
-}
-
 .App-content {
   background-color: var(--primary-color);
   display: grid;
-  grid-template: 
-    "we dg hu" 2rem
-    "we de wi" 2rem
-    / 1fr 2fr 2fr;
+  grid-template:
+    "lt lt lt" 1fr
+    "we dg hu" 1fr
+    "we de wi" 1fr
+    / .6fr 1fr 1fr;
   color: #fff;
   width: 60%;
-  justify-items: center;
-  font-size: 1.2rem;
+  justify-items: start;
+  align-items: center;
+  font-size: 1.4rem;
   box-sizing: border-box;
-  padding: 1%;
-  line-height: 2rem;
   border-radius: .3rem;
-  font-family: 'Lora', serif;
   box-shadow: 0 2px 5px rgba(0,0,0,.3);
+  margin: 5% 0 0;
+  column-gap: 1%;
+}
+
+#local-and-time {
+  font-size: 1.8rem;
+  font-weight: 600;
+  font-family: 'Lora', serif;
+  grid-area: lt;
+  justify-self: center;
 }
 
 #weather {
   grid-area: we;
-  height: 90%;
+  width: 80%;
   object-fit: contain;
-  align-self: center;
+  place-self: center;
 }
 
 #degrees {
@@ -73,7 +74,7 @@
 
 #week {
   width: 80%;
-  margin: 15% 0 10%;
+  margin: 5% 0;
 }
 
 #week-content {
@@ -130,7 +131,7 @@
   text-align: center;
   box-shadow: 0 0 3px rgba(0,0,0,.3);
   text-decoration: underline #E51A4C;
-  margin-bottom: 3%;
+  margin-bottom: 2%;
   box-sizing: border-box;
   align-self: center;
 }
@@ -153,10 +154,11 @@
   font-family: 'Mukta', serif;
   font-size: 1.4rem;
   width: 40%;
+  margin: 0;
 }
 
 #icon-author {
-  margin: 5%;
+  margin: 3%;
   font-size: 1.4rem;
   font-weight: 600;
   text-align: center;
@@ -176,16 +178,16 @@
 }
 
 @media screen and (min-width: 800px) {
-  #local-and-time {
-    font-size: 1.4em;
-  }
-
   .App-content {
     max-width: 400px;
   }
+
+  #local-and-time {
+    font-size: 1.4em;
+  }
   
   #week {
-    max-width: 640px;
+    max-width: 560px;
   }
 
   #week-content .day {
@@ -213,12 +215,12 @@
     font-size: 2.4rem;
   }
   
-  #local-and-time {
-    font-size: 1.5rem;
+  .App-content {
+    font-size: 1.2rem;
   }
   
-  .App-content {
-    font-size: 1.1rem;
+  #local-and-time {
+    font-size: 1.5rem;
   }
 
   #week {
@@ -257,7 +259,7 @@
 
 @media screen and (max-width: 330px) {
   .App-content {
-    width: auto;
+    width: 80%;
   }
 
   #week {

@@ -111,11 +111,12 @@ function App() {
         <h1 id="title">Our Weather</h1>
       </header>
 
-      <h2 id="local-and-time">
-        {localization} - <time>{time}</time>
-      </h2>
-
       <main className="App-content">
+
+        <h2 id="local-and-time">
+          {localization} - <time>{time}</time>
+        </h2>
+        
         {weekWeather[0].icon &&  <WeatherIcon id="weather" icon={weekWeather[0].icon} iconId={weekWeather[0].iconId} />}
 
         <span id="degrees">
