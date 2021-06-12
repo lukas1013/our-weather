@@ -1,153 +1,138 @@
 .App {
+  width: 100%;
+  height: 100vh;
   display: flex;
-  flex-wrap: wrap;
-  min-height: 100vh;
-  height: 100%;
-  justify-content: center;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .App-header {
   background-color: var(--header-and-footer);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(8px + 1vmin);
-  padding: 1%;
   color: #fff;
   width: 100%;
+  box-sizing: border-box;
+  padding: 1%;
 }
 
 #title {
   margin: 0;
+  text-align: center;
+  font-size: 2.8rem;
 }
 
 #local-and-time {
-  margin: 10% 0;
   align-self: center;
-  width: 50%;
-  text-align: center;
-}
-
-#local-and-time time {
-  font-size: 90%;
+  font-size: 1.8rem;
+  font-weight: 600;
+  font-family: 'Lora', serif;
+  margin: 10% 0;
 }
 
 .App-content {
-  font-family: 'Lora', serif;
   background-color: var(--primary-color);
   display: grid;
   grid-template: 
-    "weather dg hu" 2rem
-    "weather de wi" 2rem
+    "we dg hu" 2rem
+    "we de wi" 2rem
     / 1fr 2fr 2fr;
-  width: 76%;
-  height: 4rem;
   color: #fff;
-  border-radius: .3rem;
-  font-size: .8rem;
-  text-align: left;
-  box-shadow: 0 1px 3px rgba(0,0,0,.4);
+  width: 60%;
   justify-items: center;
+  font-size: 1.2rem;
+  box-sizing: border-box;
   padding: 1%;
+  line-height: 2rem;
+  border-radius: .3rem;
+  font-family: 'Lora', serif;
+  box-shadow: 0 2px 5px rgba(0,0,0,.3);
 }
 
-.App-content #weather {
-  grid-area: weather;
-  width: 90%;
+#weather {
+  grid-area: we;
   height: 90%;
-  box-sizing: border-box;
-  align-self: center;
   object-fit: contain;
+  align-self: center;
 }
 
 #degrees {
   grid-area: dg;
-  align-self: flex-end;
 }
 
 #desc {
   grid-area: de;
-  align-self: center;
 }
 
 #humidity {
   grid-area: hu;
-  align-self: flex-end;
 }
 
 #wind {
   grid-area: wi;
-  align-self: center;
 }
 
 #week {
-  margin: 10% 0 8%;
-  width: 90%;
-  box-shadow: 0 0 4px rgba(0,0,0,.4);
-  box-sizing: border-box;
-  border-radius: .3rem;
-  overflow: hidden;
-  text-align: center;
-  background-color: var(--secondary-color);
+  width: 80%;
+  margin: 15% 0 10%;
 }
 
 #week-content {
-  width: 100%;
   display: grid;
+  width: 100%;
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: 1fr 1.5fr 1fr;
-  justify-items: center;
-  box-sizing: border-box;
+  text-align: center;
+  box-shadow: 0 0 5px rgba(0,0,0,.4);
+  border-radius: .4rem;
   background-color: var(--secondary-color);
   color: #fff;
+  line-height: 3rem;
+  font-size: 1.4rem;
+  overflow: hidden;
+  padding: 1%;
+  grid-column-gap: 1%;
+  box-sizing: border-box;
+  font-weight: bold;
 }
 
 #week-content .day {
-  font-weight: 500;
-  width: 100%;
-  grid-row-start: 1;
-  box-sizing: border-box;
-  line-height: 2em;
-  font-weight: 600;
+  grid-row: 1;
+  grid-column: span 1;
 }
 
 #week-content .weather-container {
-  grid-row-start: 2;
-  width: 3rem;
-  height: 3rem;
+  grid-row: 2;
+  width: 100%;
+  grid-column: span 1;
   margin: 0;
-  align-self: end;
+  height: 3rem;
+  align-self: center;
 }
 
-#week-content .weather {  
+#week-content .weather {
+  width: 3rem;
   object-fit: contain;
-  box-sizing: border-box;
-  width: 80%;
-  height: 80%;
-  margin-top: .3rem;
 }
 
 #week-content .degrees {
-  grid-row-start: 3;
-  width: 100%;
-  line-height: 2em;
-  align-self: end;
-  font-size: .9rem;
+  grid-row: 3;
+  grid-column: span 1;
+  font-size: .9em;
 }
 
 #change-location {
-  margin-bottom: 2%;
-  color: var(--primary-color);
-  text-decoration: underline var(--primary-color) 2px;
-  text-align: center;
   background-color: var(--button-color);
   color: #fff;
+  padding: .5rem;
+  border-radius: .4rem;
+  width: 34%;
+  max-width: 300px;
+  text-align: center;
+  box-shadow: 0 0 3px rgba(0,0,0,.3);
   text-decoration: underline #E51A4C;
+  margin-bottom: 3%;
+  box-sizing: border-box;
   align-self: center;
-  padding: 1%;
-  border-radius: .3rem;
-  width: 50%;
 }
 
 #change-location:hover {
@@ -156,13 +141,10 @@
   color: #E51A4C;
   box-shadow: none;
   text-decoration: none;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 #address-ipt {
-  margin-bottom: 5%;
-  align-self: center;
-  padding: 1%;
   outline: none;
   border: none;
   border-bottom: .1rem solid #E51A4C;
@@ -174,20 +156,123 @@
 }
 
 #icon-author {
-  font-size: .8rem;
-  width: 80%;
-  text-align: center;
   margin: 5%;
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-align: center;
 }
 
 .App-footer {
-  color: #fff;
-  padding: 1%;
-  align-self: flex-end;
   background-color: var(--header-and-footer);
   width: 100%;
+  color: #fff;
+  padding: 1%;
+  box-sizing: border-box;
+  justify-self: flex-end;
 }
 
 .App-footer #github {
   color: inherit;
+}
+
+@media screen and (min-width: 800px) {
+  #local-and-time {
+    font-size: 1.4em;
+  }
+
+  .App-content {
+    max-width: 400px;
+  }
+  
+  #week {
+    max-width: 640px;
+  }
+
+  #week-content .day {
+    font-size: 1.5rem;
+  }
+
+  #week-content .degrees {
+    font-size: 1.4rem;
+  }
+
+  #change-location {
+    max-width: 220px;
+    padding: .8rem;
+    border-radius: .6rem;
+  }
+
+  #address-ipt {
+    max-width: 280px;
+    border-bottom-width: .2rem;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  #title {
+    font-size: 2.4rem;
+  }
+  
+  #local-and-time {
+    font-size: 1.5rem;
+  }
+  
+  .App-content {
+    font-size: 1.1rem;
+  }
+
+  #week {
+    width: 70%;
+  }
+
+  #week-content .day > .long {
+    display: none;
+  }
+
+  #week-content .weather-container {
+    height: 2rem;
+  }
+
+  #week-content .weather {
+    width: 2rem;
+  }
+
+  #week-content .degrees {
+    font-size: 1.2rem;
+  }
+
+  #change-location {
+    font-size: 1.4rem;
+  }
+
+  #address-ipt {
+    font-size: 1.2rem;
+    line-height: 2rem;
+  }
+  
+  #icon-author {
+    font-size: 1.3rem;
+  }
+}
+
+@media screen and (max-width: 330px) {
+  .App-content {
+    width: auto;
+  }
+
+  #week {
+    width: 80%;
+  }
+  
+  #week-content {
+    overflow-x: scroll;
+  }
+
+  #change-location {
+    width: 50%;
+  }
+
+  #address-ipt {
+    width: 50%;
+  }
 }

@@ -140,7 +140,7 @@ function App() {
           {
             weekWeather.slice(1).map((item, key) => (
               <Fragment key={key}>
-                <span className="day">{week[key]}</span>
+                <span className="day">{week[key].slice(0,3)}<span className="long">{week[key].slice(3)}</span></span>
                 <figure className="weather-container">
                   {item.icon && <WeatherIcon className="weather" title={item.desc} icon={item.icon} iconId={item.iconId} />}
                 </figure>
