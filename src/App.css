@@ -78,22 +78,18 @@
 }
 
 #week-content {
-  display: grid;
-  width: 100%;
-  grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: 1fr 1.5fr 1fr;
+  width: auto;
   text-align: center;
   box-shadow: 0 0 5px rgba(0,0,0,.4);
   border-radius: .4rem;
   background-color: var(--secondary-color);
   color: #fff;
-  line-height: 3rem;
   font-size: 1.4rem;
   overflow: hidden;
   padding: 1%;
-  grid-column-gap: 1%;
   box-sizing: border-box;
   font-weight: bold;
+  margin: auto;
 }
 
 #week-content .day {
@@ -101,13 +97,14 @@
   grid-column: span 1;
 }
 
-#week-content .weather-container {
-  grid-row: 2;
-  width: 100%;
-  grid-column: span 1;
-  margin: 0;
-  height: 3rem;
-  align-self: center;
+#week-content caption {
+  color: var(--text-color);
+  margin-bottom: 2%;
+}
+
+#week-content .day {
+  /* 100 / 7 */
+  width: 14.28%;
 }
 
 #week-content .weather {
@@ -116,8 +113,6 @@
 }
 
 #week-content .degrees {
-  grid-row: 3;
-  grid-column: span 1;
   font-size: .9em;
 }
 
@@ -129,11 +124,12 @@
   width: 34%;
   max-width: 300px;
   text-align: center;
-  box-shadow: 0 0 3px rgba(0,0,0,.3);
+  box-shadow: 0 0 3px rgba(0,0,0,.4);
   text-decoration: underline #E51A4C;
   margin-bottom: 2%;
   box-sizing: border-box;
   align-self: center;
+  border: none;
 }
 
 #change-location:hover {
@@ -183,13 +179,9 @@
   }
 
   #local-and-time {
-    font-size: 1.4em;
+    font-size: 1.8rem;
   }
   
-  #week {
-    max-width: 560px;
-  }
-
   #week-content .day {
     font-size: 1.5rem;
   }
@@ -224,7 +216,7 @@
   }
 
   #week {
-    width: 70%;
+    width: 96%;
   }
 
   #week-content .day > .long {
@@ -232,15 +224,19 @@
   }
 
   #week-content .weather-container {
-    height: 2rem;
+    height: 2.2rem;
   }
 
   #week-content .weather {
-    width: 2rem;
+    width: 2.2rem;
   }
 
   #week-content .degrees {
     font-size: 1.2rem;
+  }
+
+  #week-content .desc {
+    font-size: 1.3rem;
   }
 
   #change-location {
@@ -262,10 +258,6 @@
     width: 80%;
   }
 
-  #week {
-    width: 80%;
-  }
-  
   #week-content {
     overflow-x: scroll;
   }
