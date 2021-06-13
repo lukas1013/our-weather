@@ -44,15 +44,18 @@ function App() {
   }, []);
   const setBrowserLocation = useCallback(() => {
     if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(({ coords }) => {
+      navigator.geolocation.getCurrentPosition(async ({ coords }) => {
         const { latitude, longitude } = coords
         sessionStorage.setItem('coords', JSON.stringify(coords))
         setCoordinates(coords)
-        return geocodeApi.getReverseGeocode({latitude, longitude}).then(address => {
-          sessionStorage.setItem('address', address)
-          setLocalization(address)
-        }).catch(err => console.log(err.message))
-      })
+        try {
+          const address = await geocodeApi.getReverseGeocode({ latitude, longitude });
+          sessionStorage.setItem('address', address);
+          setLocalization(address);
+        } catch (err) {
+          return console.log(err.message);
+        }
+      }, err => console.log(err.message), { enableHighAccuracy: true })
     }
   }, []);
   const changeLocation = useCallback(e => {
