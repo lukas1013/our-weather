@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, Fragment, useRef, useCallback } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import ISO6391 from 'iso-639-1';
 import * as geocodeApi from './services/geocode';
 import * as weatherApi from './services/weather';
@@ -138,22 +138,59 @@ function App() {
       </main>
       
       <article id="week">
-        <div id="week-content">
+        <table id="week-content">
+          <caption>7 day weather</caption>
+          <thead>
+          <tr>
           {
-            weekWeather.slice(1).map((item, key) => (
-              <Fragment key={key}>
-                <span className="day">{week[key].slice(0,3)}<span className="long">{week[key].slice(3)}</span></span>
-                <figure className="weather-container">
-                  {item.icon && <WeatherIcon className="weather" title={item.desc} icon={item.icon} iconId={item.iconId} />}
-                </figure>
-                <span className="degrees">{item.temp ?? ''}</span>
-              </Fragment>
-            )) 
+            weekWeather.slice(1).map((item, key) => {
+              const index = key === 0 ? 1 : 5 + (key - 1) * 4;
+              
+              return (
+                <th key={key} className="day" tabIndex={index} scope="col">{week[key].slice(0,3)}<span className="long">{week[key].slice(3)}</span></th>
+              )
+            })
+            }
+          </tr>
+          </thead>
+          <tbody>
+          <tr className="weather-row">
+          {
+            weekWeather.slice(1).map((item, key) => {
+              const index = key === 0 ? 2 : 5 + (key - 1) * 4 + 1
+              return (
+                <td key={key} className="weather-container">
+                  {item.icon && <WeatherIcon tabIndex={index} className="weather" title={item.title} aria-labelledby={'desc' + (key + 1)} icon={item.icon} iconId={item.iconId} /> } 
+                </td>
+              )
+            })
           }
-        </div>
+          </tr>
+          <tr>
+          {
+            weekWeather.slice(1).map((item, key) => {
+              const index = key === 0 ? 3 : 5 + (key - 1) * 4 + 1
+              return (
+                <td key={key} tabIndex={index} className="degrees">{item.temp ?? ''}</td>
+              )
+            })
+          }
+          </tr>
+          <tr>
+          {
+            weekWeather.slice(1).map((item, key) => {
+              const index = key === 0 ? 4 : 5 + (key - 1) * 4 + 1
+              return (
+                <td key={key} id={'desc' + (key + 1)} tabIndex={index} className="desc">{item.desc}</td>
+              )
+            })
+          }
+          </tr>
+          </tbody>
+        </table>
       </article>
 
-      <label htmlFor="address-ipt" id="change-location" onClick={() => setIsChangingLocation(!isChangingLocation)}>Change location</label>
+      <button id="change-location" onClick={() => setIsChangingLocation(!isChangingLocation)}>Change location</button>
 
       <input 
         ref={changeLocationRef} 
