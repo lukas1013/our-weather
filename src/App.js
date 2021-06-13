@@ -109,6 +109,12 @@ function App() {
     }
   }, [time, days, today])
 
+  useEffect(() => {
+    if (isChangingLocation) {
+      changeLocationRef.current.focus()
+    }
+  }, [isChangingLocation, changeLocationRef])
+
   return (
     <div className="App">
       <header className="App-header">
