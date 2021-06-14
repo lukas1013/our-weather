@@ -1,10 +1,11 @@
 .App {
   width: 100%;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
   justify-content: space-between;
+  overflow: auto;
 }
 
 .App-header {
@@ -33,12 +34,12 @@
   width: 60%;
   justify-items: start;
   align-items: center;
-  font-size: 1.4rem;
   box-sizing: border-box;
   border-radius: .3rem;
   box-shadow: 0 2px 5px rgba(0,0,0,.3);
-  margin: 5% 0 0;
+  margin: 10% 0;
   column-gap: 1%;
+  flex: 0 0 auto;
 }
 
 #local-and-time {
@@ -74,17 +75,19 @@
 
 #week {
   width: 80%;
-  margin: 5% 0;
+  margin-bottom: 10%;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  overflow-x: auto;
 }
 
 #week-content {
-  width: auto;
+  min-width: 100%;
   text-align: center;
   box-shadow: 0 0 5px rgba(0,0,0,.4);
-  border-radius: .4rem;
+  border-radius: .5rem;
   background-color: var(--secondary-color);
   color: #fff;
-  font-size: 1.4rem;
   overflow: hidden;
   padding: 1%;
   box-sizing: border-box;
@@ -126,7 +129,7 @@
   text-align: center;
   box-shadow: 0 0 3px rgba(0,0,0,.4);
   text-decoration: underline #E51A4C;
-  margin-bottom: 2%;
+  margin-bottom: 3%;
   box-sizing: border-box;
   align-self: center;
   border: none;
@@ -150,11 +153,11 @@
   font-family: 'Mukta', serif;
   font-size: 1.4rem;
   width: 40%;
-  margin: 0;
+  margin: 0 0 3%;
 }
 
 #icon-author {
-  margin: 3%;
+  margin: 5% 0;
   font-size: 1.4rem;
   font-weight: 600;
   text-align: center;
@@ -176,10 +179,21 @@
 @media screen and (min-width: 800px) {
   .App-content {
     max-width: 400px;
+    margin: 5% 0 8%;
   }
 
   #local-and-time {
     font-size: 1.8rem;
+  }
+
+  #week {
+    width: 60%;
+    margin-bottom: 5%;
+  }
+
+  #week-content {
+    width: 100%;
+    max-width: 600px;
   }
   
   #week-content .day {
@@ -194,11 +208,17 @@
     max-width: 220px;
     padding: .8rem;
     border-radius: .6rem;
+    margin-bottom: 2%;
   }
 
   #address-ipt {
     max-width: 280px;
     border-bottom-width: .2rem;
+    margin-bottom: 2%;
+  }
+
+  #icon-author {
+    margin: 2% 0;
   }
 }
 
@@ -213,10 +233,6 @@
   
   #local-and-time {
     font-size: 1.5rem;
-  }
-
-  #week {
-    width: 96%;
   }
 
   #week-content .day > .long {
@@ -257,10 +273,21 @@
   .App-content {
     width: 80%;
   }
-
-  #week-content {
-    overflow-x: scroll;
+  
+  #week {
+    width: 90%;
   }
+  
+  #week-content {
+    padding: 1%;
+    width: 140%;
+  }
+
+  #week-content .day,
+  #week-content td {
+    padding: 1%;
+    box-sizing: border-box;
+  } 
 
   #change-location {
     width: 50%;
