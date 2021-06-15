@@ -30,6 +30,8 @@ function App() {
   const [weekWeather, setWeekWeather] = useState(JSON.parse(sessionStorage.getItem('weather')) || [{}]);
   const changeLocationRef = useRef(null);
   const [isChangingLocation,setIsChangingLocation] = useState(false);
+  const [isGeolocationDenied,setIsGeolocationDenied] = useState(0);
+  const [canShowContent, setCanShowContent] = useState(isGeolocationDenied === 2 || (localization || weekWeather[0].temp));
   const clock = useCallback(() => {
     return setInterval(() => {
       const locale = sessionStorage.getItem('lang'), timeZone = sessionStorage.getItem('timeZone');
@@ -115,19 +117,44 @@ function App() {
     }
   }, [isChangingLocation, changeLocationRef])
 
+  useEffect(() => {
+    navigator.permissions.query({ name: 'geolocation' }).then(permission => {
+      if (permission.state === 'granted') {
+        return setIsGeolocationDenied(2)
+      } else if (permission.state === 'prompt') {
+        return setIsGeolocationDenied(1)
+      }
+
+      setIsGeolocationDenied(0)
+    })
+      
+  },[])
+
+  useEffect(() => {
+    if (isGeolocationDenied < 2 && (!localization || !weekWeather[0].temp)) {
+      return setCanShowContent(false)
+    }
+    
+    setCanShowContent(true)
+  }, [isGeolocationDenied, localization, weekWeather])
+
   return (
     <div className="App">
       <header className="App-header">
-        <h1 id="title">Our Weather</h1>
+        <h1 id="title" translate="no">Our Weather</h1>
       </header>
 
-      <main className="App-content">
+    {!canShowContent && <span id="geolocation-denied-msg">
+        you must allow the site to access your location or set one manually
+      </span>}
+
+      {canShowContent && <main className="App-content">
 
         <h2 id="local-and-time">
           {localization} - <time>{time}</time>
         </h2>
         
-        {weekWeather[0].icon &&  <WeatherIcon id="weather" icon={weekWeather[0].icon} iconId={weekWeather[0].iconId} />}
+        {weekWeather[0].icon &&  <WeatherIcon id="weather" aria-labelledby="desc" icon={weekWeather[0].icon} iconId={weekWeather[0].iconId} />}
 
         <span id="degrees">
           {weekWeather[0].temp}
@@ -144,60 +171,60 @@ function App() {
         <span id="wind">
           Wind: {weekWeather[0].wind}
         </span>
-      </main>
+      </main>}
       
-      <article id="week">
+      {canShowContent && <article id="week">
         <table id="week-content">
-          <caption>7 day weather</caption>
+          <caption tabIndex="1">7 day weather</caption>
           <thead>
-          <tr>
-          {
-            weekWeather.slice(1).map((item, key) => {
-              const index = key === 0 ? 1 : 5 + (key - 1) * 4;
-              
-              return (
-                <th key={key} className="day" tabIndex={index} scope="col">{week[key].slice(0,3)}<span className="long">{week[key].slice(3)}</span></th>
-              )
-            })
-            }
-          </tr>
+            <tr>
+            {
+              weekWeather.slice(1).map((item, key) => {
+                const index = key === 0 ? 2 : 5 + (key - 1) * 4 + 1;
+                
+                return (
+                  <th key={key} className="day" tabIndex={index} colSpan="1" scope="col">{week[key].slice(0,3)}<span className="long">{week[key].slice(3)}</span></th>
+                )
+              })
+              }
+            </tr>
           </thead>
           <tbody>
-          <tr className="weather-row">
-          {
-            weekWeather.slice(1).map((item, key) => {
-              const index = key === 0 ? 2 : 5 + (key - 1) * 4 + 1
-              return (
-                <td key={key} className="weather-container">
-                  {item.icon && <WeatherIcon tabIndex={index} className="weather" title={item.title} aria-labelledby={'desc' + (key + 1)} icon={item.icon} iconId={item.iconId} /> } 
-                </td>
-              )
-            })
-          }
-          </tr>
-          <tr>
-          {
-            weekWeather.slice(1).map((item, key) => {
-              const index = key === 0 ? 3 : 5 + (key - 1) * 4 + 1
-              return (
-                <td key={key} tabIndex={index} className="degrees">{item.temp ?? ''}</td>
-              )
-            })
-          }
-          </tr>
-          <tr>
-          {
-            weekWeather.slice(1).map((item, key) => {
-              const index = key === 0 ? 4 : 5 + (key - 1) * 4 + 1
-              return (
-                <td key={key} id={'desc' + (key + 1)} tabIndex={index} className="desc">{item.desc}</td>
-              )
-            })
-          }
-          </tr>
+            <tr className="weather-row">
+            {
+              weekWeather.slice(1).map((item, key) => {
+                const index = key === 0 ? 3 : 5 + (key - 1) * 4 + 1
+                return (
+                  <td key={key} className="weather-container">
+                    {item.icon && <WeatherIcon tabIndex={index} className="weather" title={item.title} aria-labelledby={'desc' + (key + 1)} icon={item.icon} iconId={item.iconId} /> } 
+                  </td>
+                )
+              })
+            }
+            </tr>
+            <tr>
+            {
+              weekWeather.slice(1).map((item, key) => {
+                const index = key === 0 ? 4 : 5 + (key - 1) * 4 + 1
+                return (
+                  <td key={key} tabIndex={index} className="degrees">{item.temp ?? ''}</td>
+                )
+              })
+            }
+            </tr>
+            <tr>
+            {
+              weekWeather.slice(1).map((item, key) => {
+                const index = key === 0 ? 5 : 5 + (key - 1) * 4 + 1
+                return (
+                  <td key={key} id={'desc' + (key + 1)} tabIndex={index} className="desc">{item.desc}</td>
+                )
+              })
+            }
+            </tr>
           </tbody>
         </table>
-      </article>
+      </article>}
 
       <button id="change-location" onClick={() => setIsChangingLocation(!isChangingLocation)}>Change location</button>
 
@@ -208,7 +235,7 @@ function App() {
         style={{ display: isChangingLocation ? "initial" : "none" }} 
         placeholder="Albany, NY" name="address" id="address-ipt" />
 
-      <span id="icon-author" title="Freepik">
+      {canShowContent && <span id="icon-author" title="Freepik">
         Icons made by&nbsp;
         <a href="https://www.freepik.com" title="Freepik" target="_blank" rel="noopener noreferrer">
           Freepik&nbsp;
@@ -217,7 +244,7 @@ function App() {
         <a href="https://www.flaticon.com/" target="_blank" rel="noopener noreferrer" title="Flaticon">
           www.flaticon.com
         </a>
-      </span>
+      </span>}
 
       <footer className="App-footer">
         <a href="https://github.com/lukas1013/our-weather" target="_blank" rel="noopener noreferrer" id="github">

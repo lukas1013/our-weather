@@ -22,6 +22,11 @@
   font-size: 2.8rem;
 }
 
+#geolocation-denied-msg {
+  max-width: 90%;
+  text-align: center;
+}
+
 .App-content {
   background-color: var(--primary-color);
   display: grid;
@@ -93,13 +98,14 @@
   overflow: hidden;
   padding: 1%;
   box-sizing: border-box;
-  font-weight: bold;
   margin: auto;
 }
 
-#week-content .day {
-  grid-row: 1;
-  grid-column: span 1;
+#week-content *:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-width: 2px;
+  outline-color: #E51A4C;
+  outline-style: solid;
 }
 
 #week-content caption {
