@@ -2,7 +2,8 @@ import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import ISO6391 from 'iso-639-1';
 import * as geocodeApi from './services/geocode';
 import * as weatherApi from './services/weather';
-import WeatherIcon from './components/WeatherIcon/';
+import WeekWeather from './components/WeekWeather';
+import WeatherIcon from './components/WeatherIcon';
 import './App.css';
 
 function App() {
@@ -177,58 +178,7 @@ function App() {
         </span>
       </main>}
       
-      {canShowContent && <article id="week">
-        <table id="week-content">
-          <caption tabIndex="1">7 day weather</caption>
-          <thead>
-            <tr>
-            {
-              weekWeather.slice(1).map((item, key) => {
-                const index = key === 0 ? 2 : 5 + (key - 1) * 4 + 1;
-                
-                return (
-                  <th key={key} className="day" tabIndex={index} colSpan="1" scope="col">{week[key].slice(0,3)}<span className="long">{week[key].slice(3)}</span></th>
-                )
-              })
-              }
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="weather-row">
-            {
-              weekWeather.slice(1).map((item, key) => {
-                const index = key === 0 ? 3 : 5 + (key - 1) * 4 + 1
-                return (
-                  <td key={key} className="weather-container">
-                    {item.icon && <WeatherIcon tabIndex={index} className="weather" title={item.title} aria-labelledby={'desc' + (key + 1)} icon={item.icon} iconId={item.iconId} /> } 
-                  </td>
-                )
-              })
-            }
-            </tr>
-            <tr>
-            {
-              weekWeather.slice(1).map((item, key) => {
-                const index = key === 0 ? 4 : 5 + (key - 1) * 4 + 1
-                return (
-                  <td key={key} tabIndex={index} className="degrees">{item.temp ?? ''}</td>
-                )
-              })
-            }
-            </tr>
-            <tr>
-            {
-              weekWeather.slice(1).map((item, key) => {
-                const index = key === 0 ? 5 : 5 + (key - 1) * 4 + 1
-                return (
-                  <td key={key} id={'desc' + (key + 1)} tabIndex={index} className="desc">{item.desc}</td>
-                )
-              })
-            }
-            </tr>
-          </tbody>
-        </table>
-      </article>}
+      {canShowContent && <WeekWeather weekWeather={weekWeather} week={week} />}
 
       <button id="change-location" onClick={() => setIsChangingLocation(!isChangingLocation)}>Change location</button>
 
