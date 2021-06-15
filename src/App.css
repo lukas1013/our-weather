@@ -99,6 +99,7 @@
   padding: 1%;
   box-sizing: border-box;
   margin: auto;
+  font-size: 1.4rem;
 }
 
 #week-content *:focus-visible {
@@ -111,6 +112,8 @@
 #week-content caption {
   color: var(--text-color);
   margin-bottom: 2%;
+  font-size: 1.1em;
+  font-family: 'Lora', serif;
 }
 
 #week-content .day {
