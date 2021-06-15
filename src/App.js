@@ -57,7 +57,7 @@ function App() {
         } catch (err) {
           return console.log(err.message);
         }
-      }, err => console.log(err.message), { enableHighAccuracy: true })
+      }, err => console.log(err.message), { enableHighAccuracy: true, timeout: 1000 * 5, maximumAge: 0 })
     }
   }, []);
   const changeLocation = useCallback(e => {
@@ -83,10 +83,14 @@ function App() {
       }
   }, [lang]);
   const getWeekWeather = useCallback(async () => {
-    return await weatherApi.getWeekWeather(coordinates, lang).then(weWeather => {
-      sessionStorage.setItem('weather', JSON.stringify(weWeather))
-      return weWeather
-    }).catch(e => console.log(e))
+    if (coordinates?.latitude) {
+      return await weatherApi.getWeekWeather(coordinates, lang).then(weWeather => {
+        sessionStorage.setItem('weather', JSON.stringify(weWeather))
+        return weWeather
+      }).catch(e => console.log(e))
+    } 
+
+    return [{}]
   },[coordinates, lang]);
 
   useEffect(() => {
@@ -96,10 +100,10 @@ function App() {
   }, [localization, setBrowserLocation])
 
   useEffect(() => {
-    if (!weekWeather[0].temp) {
+    if (coordinates && !weekWeather[0].temp) {
       return getWeekWeather().then(weWeather => setWeekWeather(weWeather))
     }
-  }, [weekWeather,getWeekWeather])
+  }, [coordinates ,weekWeather,getWeekWeather])
 
   useEffect(() => {
     clock()
