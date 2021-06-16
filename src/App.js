@@ -1,10 +1,12 @@
-import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback, lazy, Suspense } from 'react';
 import ISO6391 from 'iso-639-1';
 import * as geocodeApi from './services/geocode';
 import * as weatherApi from './services/weather';
-import WeekWeather from './components/WeekWeather';
+// import WeekWeather from './components/WeekWeather';
 import WeatherIcon from './components/WeatherIcon';
 import './App.css';
+
+const WeekWeather = lazy(() => import('./components/WeekWeather'));
 
 function App() {
   const [localization, setLocalization] = useState(sessionStorage.getItem('address'));
@@ -178,7 +180,7 @@ function App() {
         </span>
       </main>}
       
-      {canShowContent && <WeekWeather weekWeather={weekWeather} week={week} />}
+      {canShowContent && <Suspense fallback={null}><WeekWeather weekWeather={weekWeather} week={week} /></Suspense>}
 
       <button id="change-location" onClick={() => setIsChangingLocation(!isChangingLocation)}>Change location</button>
 

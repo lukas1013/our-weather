@@ -1,6 +1,9 @@
+import { memo } from 'react';
 import WeatherIcon from '../WeatherIcon';
 
-export default function WeekWeather(props) {
+import './style.css';
+
+function WeekWeather(props) {
 
     return (
         <article id="week">
@@ -49,3 +52,5 @@ export default function WeekWeather(props) {
         </article>
     )
 }
+
+export default memo(WeekWeather);
