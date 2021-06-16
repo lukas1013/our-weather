@@ -34,7 +34,7 @@
     "lt lt lt" 1fr
     "we dg hu" 1fr
     "we de wi" 1fr
-    / .6fr 1fr 1fr;
+    / .7fr 1fr 1fr;
   color: #fff;
   width: 60%;
   justify-items: start;
@@ -45,7 +45,8 @@
   margin: 10% 0;
   column-gap: 1%;
   flex: 0 0 auto;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
+  padding: .5%;
   font-family: 'Open Sans Condensed', sans-serif;
 }
 
@@ -59,7 +60,7 @@
 
 #weather {
   grid-area: we;
-  width: 80%;
+  width: 60%;
   object-fit: contain;
   place-self: center;
 }
