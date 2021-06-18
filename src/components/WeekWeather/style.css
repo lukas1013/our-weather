@@ -28,7 +28,7 @@
   }
   
   #week-content caption {
-    color: var(--text-color);
+    color: #000;
     margin-bottom: 2%;
     font-size: 1.1em;
     font-family: 'Lora', serif;
