@@ -106,6 +106,8 @@ function App() {
       } else {
 
       }
+
+      changeLocationRef.current.value = ''
   }, [lang]);
 
   const canShowContentFunc = useCallback(async () => {
@@ -145,6 +147,12 @@ function App() {
   useEffect(() => {
     clock()
   }, [clock])
+
+  useEffect(() => {
+    if (state.isChangingLocation) {
+      changeLocationRef.current.focus()
+    }
+  }, [state.isChangingLocation])
 
   return (
     <div className="App">
