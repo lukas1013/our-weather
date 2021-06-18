@@ -1,68 +1,88 @@
-import { useState, useEffect, useMemo, useRef, useCallback, lazy, Suspense } from 'react';
-import ISO6391 from 'iso-639-1';
+import { useEffect, useMemo, useRef, useCallback, lazy, Suspense, useReducer } from 'react';
 import * as geocodeApi from './services/geocode';
 import * as weatherApi from './services/weather';
-// import WeekWeather from './components/WeekWeather';
-import WeatherIcon from './components/WeatherIcon';
+import ISO6391 from 'iso-639-1';
+import reducer from './reducer';
 import './App.css';
 
+const WeatherIcon = lazy(() => import('./components/WeatherIcon'));
 const WeekWeather = lazy(() => import('./components/WeekWeather'));
 
 function App() {
-  const [localization, setLocalization] = useState(sessionStorage.getItem('address'));
-  const [coordinates, setCoordinates] = useState(JSON.parse(sessionStorage.getItem('coords')));
+  const days = useMemo(() => ['Sunday','Monday','Tuesday','Wednesday','Thusday','Friday','Saturday'], []);
   const timezone = useMemo(() => sessionStorage.getItem('timeZone'), []);
-  const [time, setTime] = useState(new Intl.DateTimeFormat(sessionStorage.getItem('lang') || navigator.language, timezone ? { hour: '2-digit', minute: '2-digit', timeZone: timezone } : { hour: '2-digit', minute: '2-digit'}).format(new Date()));
-  const days = useMemo(() => ['Sunday','Monday','Tuesday','Wednesday','Thusday','Friday','Saturday'],[]);
-  const [today, setToday] = useState(days[new Date().getDay()]);
+  const changeLocationRef = useRef(null);
   const lang = useMemo(() => {
     const navLang = navigator.language
     //formating for the API
     return navLang.slice(0,2) + '_' + navLang.slice(-2).toUpperCase()
   }, []);
-  const week = useMemo(() => {
-    const w = []
-    if (today === 'Saturday') {
-      w.push(...days)
-    } else {
-      w.push(...([...days].splice(days.indexOf(today)+1).concat(days)))
-    }
-
-    return w
-  }, [today, days]);
-  const [weekWeather, setWeekWeather] = useState(JSON.parse(sessionStorage.getItem('weather')) || [{}]);
-  const changeLocationRef = useRef(null);
-  const [isChangingLocation,setIsChangingLocation] = useState(false);
-  const [isGeolocationDenied,setIsGeolocationDenied] = useState(0);
-  const [canShowContent, setCanShowContent] = useState(isGeolocationDenied === 2 || (localization || weekWeather[0].temp));
-  const clock = useCallback(() => {
-    return setInterval(() => {
-      const locale = sessionStorage.getItem('lang'), timeZone = sessionStorage.getItem('timeZone');
-      const options = { hour: '2-digit', minute: '2-digit' }
-      
-      if (timeZone) {
-        options.timeZone = timeZone
+  
+  const initialState = useMemo(() => ({
+    address: sessionStorage.getItem('address'),
+    coordinates: JSON.parse(sessionStorage.getItem('coords')),
+    timezone: sessionStorage.getItem('timezone'),
+    time: new Intl.DateTimeFormat(sessionStorage.getItem('lang') || navigator.language, timezone ? { hour: '2-digit', minute: '2-digit', timeZone: timezone } : { hour: '2-digit', minute: '2-digit'}).format(new Date()),
+    days: ['Sunday','Monday','Tuesday','Wednesday','Thusday','Friday','Saturday'],
+    today: (() => days[new Date().getDay()])(),
+    week: (() => {
+      const w = [], today = days[new Date().getDay()];
+      if (today === 'Saturday') {
+        w.push(...days)
+      } else {
+        w.push(...([...days].splice(days.indexOf(today)+1).concat(days)))
       }
+      
+      return w
+    })(),  
+    weekWeather: JSON.parse(sessionStorage.getItem('week_weather')) || [{}],
+    isChangingLocation: false,
+    canShowContent: !!sessionStorage.getItem('address'),
+  }), [days,timezone]);
 
-      setTime(new Intl.DateTimeFormat(locale || navigator.language, options).format(new Date()))
+  const [state,dispatch] = useReducer(reducer, initialState);
+
+  const clock = useCallback(() => {
+    const timer = setInterval(() => {
+      dispatch({ type: 'setTime' })
     }, 1000);
+    
+    return () => clearInterval(timer);
   }, []);
-  const setBrowserLocation = useCallback(() => {
+
+  const getWeekWeather = useCallback(async () => {
+    if (state.coordinates?.latitude) {
+      return await weatherApi.getWeekWeather(state.coordinates, lang).then(weWeather => {
+        sessionStorage.setItem('week_weather', JSON.stringify(weWeather))
+        return weWeather
+      }).catch(e => console.log(e))
+    } 
+
+    return [{}]
+  },[state.coordinates, lang]);
+  
+  const init = useCallback(() => {
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(async ({ coords }) => {
-        const { latitude, longitude } = coords
-        sessionStorage.setItem('coords', JSON.stringify(coords))
-        setCoordinates(coords)
         try {
+          const { latitude, longitude } = coords
           const address = await geocodeApi.getReverseGeocode({ latitude, longitude });
+          const weekWeather = await getWeekWeather()
+          sessionStorage.setItem('coords', JSON.stringify(coords))
           sessionStorage.setItem('address', address);
-          setLocalization(address);
+          sessionStorage.setItem('week_weather', JSON.stringify(weekWeather))
+          console.log(weekWeather)
+          dispatch({
+            type: 'init',
+            value: { coords, address, weekWeather }
+          })
         } catch (err) {
           return console.log(err.message);
         }
       }, err => console.log(err.message), { enableHighAccuracy: true, timeout: 1000 * 5, maximumAge: 0 })
     }
-  }, []);
+  }, [getWeekWeather]);
+
   const changeLocation = useCallback(e => {
       const inputAddress = changeLocationRef.current.value
       
@@ -74,76 +94,51 @@ function App() {
             sessionStorage.setItem('coords', JSON.stringify(coords))
             sessionStorage.setItem('lang', ISO6391.getCode(address.city || address.state))
             sessionStorage.setItem('timeZone', weWeather[0].timeZone);
-            sessionStorage.setItem('weather', JSON.stringify(weWeather));
-            setWeekWeather(weWeather)
-            return address
+            sessionStorage.setItem('week_weather', JSON.stringify(weWeather));
+            dispatch({ 
+              type: 'change location', value: { 
+                weekWeather: weWeather,
+                address
+              }
+            })
           })
-        }).then(address => {
-          setLocalization(`${address.city}, ${address.stateCode || address.countryCode}`);
         })
+      } else {
 
-        setIsChangingLocation(false)
       }
   }, [lang]);
-  const getWeekWeather = useCallback(async () => {
-    if (coordinates?.latitude) {
-      return await weatherApi.getWeekWeather(coordinates, lang).then(weWeather => {
-        sessionStorage.setItem('weather', JSON.stringify(weWeather))
-        return weWeather
-      }).catch(e => console.log(e))
-    } 
 
-    return [{}]
-  },[coordinates, lang]);
+  const canShowContentFunc = useCallback(async () => {
+    const permission = await navigator.permissions.query({ name: 'geolocation' })
+    let canShowContent = false, isGeolocationDenied = 0, hasCoordinates = !!JSON.parse(sessionStorage.getItem('coords'))?.lenght, hasWeekWeather = !!JSON.parse(sessionStorage.getItem('week_weather'))?.lenght
+
+    if (permission.state === 'granted') {
+      isGeolocationDenied = 2
+    } else if (permission.state === 'denied') {
+      isGeolocationDenied = 1
+    }
+
+    if (isGeolocationDenied === 2 || hasCoordinates || hasWeekWeather) {
+      canShowContent = true
+    }
+
+    dispatch({ type: 'can show content', value: canShowContent })
+  },[]);
 
   useEffect(() => {
-    if (!localization) {
-      return setBrowserLocation()
-    }
-  }, [localization, setBrowserLocation])
+    canShowContentFunc()
+  }, [canShowContentFunc]);
 
   useEffect(() => {
-    if (coordinates && !weekWeather[0].temp) {
-      return getWeekWeather().then(weWeather => setWeekWeather(weWeather))
+    if (!state.weekWeather[0].temp) {
+      init()
     }
-  }, [coordinates ,weekWeather,getWeekWeather])
-
+    return false
+  }, [state.weekWeather, init])
+  
   useEffect(() => {
     clock()
   }, [clock])
-
-  useEffect(() => {
-    if (time === '00:00') {
-      setToday(days[days.indexOf(today) + 1])
-    }
-  }, [time, days, today])
-
-  useEffect(() => {
-    if (isChangingLocation) {
-      changeLocationRef.current.focus()
-    }
-  }, [isChangingLocation, changeLocationRef])
-
-  useEffect(() => {
-    navigator.permissions.query({ name: 'geolocation' }).then(permission => {
-      if (permission.state === 'granted') {
-        return setIsGeolocationDenied(2)
-      } else if (permission.state === 'prompt') {
-        return setIsGeolocationDenied(1)
-      }
-
-      setIsGeolocationDenied(0)
-    })
-      
-  },[])
-
-  useEffect(() => {
-    if (isGeolocationDenied < 2 && (!localization || !weekWeather[0].temp)) {
-      return setCanShowContent(false)
-    }
-    
-    setCanShowContent(true)
-  }, [isGeolocationDenied, localization, weekWeather])
 
   return (
     <div className="App">
@@ -151,47 +146,51 @@ function App() {
         <h1 id="title" translate="no">Our Weather</h1>
       </header>
 
-    {!canShowContent && <span id="geolocation-denied-msg">
+    {!state.canShowContent && <span id="geolocation-denied-msg">
         you must allow the site to access your location or set one manually
       </span>}
 
-      {canShowContent && <main className="App-content">
+      {state.canShowContent && <main className="App-content">
 
         <h2 id="local-and-time">
-          {localization} - <time>{time}</time>
+          {state.address} - <time>{state.time}</time>
         </h2>
         
-        {weekWeather[0].icon &&  <WeatherIcon id="weather" aria-labelledby="desc" icon={weekWeather[0].icon} iconId={weekWeather[0].iconId} />}
+        {state.weekWeather[0].icon &&  <Suspense fallback={null}>
+          <WeatherIcon id="weather" aria-labelledby="desc" icon={state.weekWeather[0].icon} iconId={state.weekWeather[0].iconId} />
+        </Suspense>}
 
         <span id="degrees">
-          {weekWeather[0].temp}
+          {state.weekWeather[0].temp}
         </span>
 
         <span id="desc">
-          {weekWeather[0].desc}
+          {state.weekWeather[0].desc}
         </span>
 
         <span id="humidity">
-          Humidity: {weekWeather[0].humidity}
+          Humidity: {state.weekWeather[0].humidity}
         </span>
 
         <span id="wind">
-          Wind: {weekWeather[0].wind}
+          Wind: {state.weekWeather[0].wind}
         </span>
       </main>}
       
-      {canShowContent && <Suspense fallback={null}><WeekWeather weekWeather={weekWeather} week={week} /></Suspense>}
+      {state.canShowContent && <Suspense fallback={null}>
+        <WeekWeather weekWeather={state.weekWeather} week={state.week} />
+      </Suspense>}
 
-      <button id="change-location" onClick={() => setIsChangingLocation(!isChangingLocation)}>Change location</button>
+      <button id="change-location" onClick={() => dispatch({ type: 'is changing location', value: !state.isChangingLocation })}>Change location</button>
 
       <input 
         ref={changeLocationRef} 
-        onBlur={() => setIsChangingLocation(false)} 
+        onBlur={() => dispatch({ type: 'is changing location', value: false })} 
         onKeyDown={e => changeLocation(e)}
-        style={{ display: isChangingLocation ? "initial" : "none" }} 
+        style={{ display: state.isChangingLocation ? "initial" : "none" }} 
         placeholder="Albany, NY" name="address" id="address-ipt" />
 
-      {canShowContent && <span id="icon-author" title="Freepik">
+      {state.canShowContent && <span id="icon-author" title="Freepik">
         Icons made by&nbsp;
         <a href="https://www.freepik.com" title="Freepik" target="_blank" rel="noopener noreferrer">
           Freepik&nbsp;
