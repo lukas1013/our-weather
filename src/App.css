@@ -60,7 +60,7 @@
 
 #weather {
   grid-area: we;
-  width: 60%;
+  width: 36px;
   object-fit: contain;
   place-self: center;
 }
