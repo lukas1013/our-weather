@@ -109,8 +109,15 @@ function App() {
   }, [lang]);
 
   const canShowContentFunc = useCallback(async () => {
+    const coords = JSON.parse(sessionStorage.getItem('coords')), weWeather = JSON.parse(sessionStorage.getItem('week_weather'))
+    const hasCoordinates = (coords instanceof Object && Object.keys(coords).length), hasWeekWeather = (weWeather instanceof Array && weWeather.length);
+
+    if (hasCoordinates || hasWeekWeather) {
+      return dispatch({ type: 'can show content', value: true });
+    }
+
     const permission = await navigator.permissions.query({ name: 'geolocation' })
-    let canShowContent = false, isGeolocationDenied = 0, hasCoordinates = !!JSON.parse(sessionStorage.getItem('coords'))?.lenght, hasWeekWeather = !!JSON.parse(sessionStorage.getItem('week_weather'))?.lenght
+    let canShowContent = false, isGeolocationDenied = 0
 
     if (permission.state === 'granted') {
       isGeolocationDenied = 2
@@ -118,11 +125,10 @@ function App() {
       isGeolocationDenied = 1
     }
 
-    if (isGeolocationDenied === 2 || hasCoordinates || hasWeekWeather) {
-      canShowContent = true
+    if (isGeolocationDenied === 2) {
+      dispatch({ type: 'can show content', value: canShowContent })
     }
 
-    dispatch({ type: 'can show content', value: canShowContent })
   },[]);
 
   useEffect(() => {
