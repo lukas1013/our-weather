@@ -84,10 +84,8 @@ function App() {
   }, [getWeekWeather]);
 
   const changeLocation = useCallback(e => {
-      const inputAddress = changeLocationRef.current.value
-      
-      if (e.key === "Enter" && inputAddress.match(/^[[a-z\sáàãâçéèẽêíìîóòôúù]+[,\s]?[a-z]{2}?/i)) { 
-        geocodeApi.getGeocode(inputAddress.replace(/[\s,]/g, '+')).then(response => {
+      if (e.key === "Enter" && state.newLocation.match(/^[[a-z\sáàãâçéèẽêíìîóòôúù]+[,\s]?[a-z]{2}?/i)) { 
+        geocodeApi.getGeocode(state.newLocation.replace(/[\s,]/g, '+')).then(response => {
           const [ coords, address ] = response;
           return weatherApi.getLocalizationWeather(coords, lang).then(weWeather => {
             sessionStorage.setItem('address', `${address.city}, ${address.stateCode || address.countryCode}`)
@@ -106,9 +104,7 @@ function App() {
       } else {
 
       }
-
-      changeLocationRef.current.value = ''
-  }, [lang]);
+  }, [lang, state.newLocation]);
 
   const canShowContentFunc = useCallback(async () => {
     const coords = JSON.parse(sessionStorage.getItem('coords')), weWeather = JSON.parse(sessionStorage.getItem('week_weather'))
@@ -199,8 +195,10 @@ function App() {
 
       <input 
         ref={changeLocationRef} 
+        value={state.newLocation}
         onBlur={() => dispatch({ type: 'is changing location', value: false })} 
         onKeyDown={e => changeLocation(e)}
+        onChange={e => dispatch({ type: 'typing new location', value: e.target.value })}
         style={{ display: state.isChangingLocation ? "initial" : "none" }} 
         placeholder="Albany, NY" name="address" id="address-ipt" />
 

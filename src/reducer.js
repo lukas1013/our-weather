@@ -15,9 +15,13 @@ export default function reducer(state, action) {
             newState.address = `${address.city}, ${address.stateCode || address.countryCode}`;
             newState.canShowContent = true
             newState.isChangingLocation = false
+            newState.newLocation = ''
             break
         case 'is changing location':
             newState.isChangingLocation = action.value ?? !state.isChangingLocation
+            break
+        case 'typing new location':
+            newState.newLocation = action.value
             break
         case 'can show content':
             newState.canShowContent = action.value
