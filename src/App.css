@@ -29,7 +29,6 @@
 
 .App-content {
   background-color: var(--primary-color);
-  display: grid;
   grid-template:
     "lt lt lt" 1fr
     "we dg hu" 1fr

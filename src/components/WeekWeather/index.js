@@ -6,7 +6,7 @@ import './style.css';
 function WeekWeather(props) {
 
     return (
-        <article id="week">
+        <article id="week" style={props.style}>
             <table id="week-content">
                 <caption tabIndex="1">7 day weather</caption>
                 <thead>
