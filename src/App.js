@@ -160,15 +160,15 @@ function App() {
         you must allow the site to access your location or set one manually
       </span>}
 
-      {state.canShowContent && <main className="App-content">
+      {state.canShowContent && <main className="App-content" style={{ display: state.weekWeather[0].temp ? 'grid' : 'none' }}>
 
         <h2 id="local-and-time">
           {state.address} - <time>{state.time}</time>
         </h2>
         
-        {state.weekWeather[0].icon &&  <Suspense fallback={null}>
+        <Suspense fallback={null}>
           <WeatherIcon id="weather" aria-labelledby="desc" icon={state.weekWeather[0].icon} iconId={state.weekWeather[0].iconId} />
-        </Suspense>}
+        </Suspense>
 
         <span id="degrees">
           {state.weekWeather[0].temp}
@@ -187,9 +187,9 @@ function App() {
         </span>
       </main>}
       
-      {state.canShowContent && <Suspense fallback={null}>
-        <WeekWeather weekWeather={state.weekWeather} week={state.week} />
-      </Suspense>}
+      <Suspense fallback={null}>
+        <WeekWeather weekWeather={state.weekWeather} week={state.week} style={{display: state.weekWeather[0].temp ? 'initial' : 'none'}}/>
+      </Suspense>
 
       <button id="change-location" onClick={() => dispatch({ type: 'is changing location', value: !state.isChangingLocation })}>Change location</button>
 
@@ -202,7 +202,7 @@ function App() {
         style={{ display: state.isChangingLocation ? "initial" : "none" }} 
         placeholder="Albany, NY" name="address" id="address-ipt" />
 
-      {state.canShowContent && <span id="icon-author" title="Freepik">
+      {state.canShowContent && <span id="icon-author" title="Freepik" style={{ display: state.weekWeather[0].temp ? 'initial' : 'none' }}>
         Icons made by&nbsp;
         <a href="https://www.freepik.com" title="Freepik" target="_blank" rel="noopener noreferrer">
           Freepik&nbsp;
