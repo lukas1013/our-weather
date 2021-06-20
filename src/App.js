@@ -2,43 +2,19 @@ import { useEffect, useMemo, useRef, useCallback, lazy, Suspense, useReducer } f
 import * as geocodeApi from './services/geocode';
 import * as weatherApi from './services/weather';
 import ISO6391 from 'iso-639-1';
-import reducer from './reducer';
+import reducer, { initialState } from './reducer';
 import './App.css';
 
 const WeatherIcon = lazy(() => import('./components/WeatherIcon'));
 const WeekWeather = lazy(() => import('./components/WeekWeather'));
 
 function App() {
-  const days = useMemo(() => ['Sunday','Monday','Tuesday','Wednesday','Thusday','Friday','Saturday'], []);
-  const timezone = useMemo(() => sessionStorage.getItem('timeZone'), []);
   const changeLocationRef = useRef(null);
   const lang = useMemo(() => {
     const navLang = navigator.language
     //formating for the API
     return navLang.slice(0,2) + '_' + navLang.slice(-2).toUpperCase()
   }, []);
-  
-  const initialState = useMemo(() => ({
-    address: sessionStorage.getItem('address'),
-    coordinates: JSON.parse(sessionStorage.getItem('coords')),
-    timezone: sessionStorage.getItem('timezone'),
-    time: new Intl.DateTimeFormat(sessionStorage.getItem('lang') || navigator.language, timezone ? { hour: '2-digit', minute: '2-digit', timeZone: timezone } : { hour: '2-digit', minute: '2-digit'}).format(new Date()),
-    days: ['Sunday','Monday','Tuesday','Wednesday','Thusday','Friday','Saturday'],
-    today: (() => days[new Date().getDay()])(),
-    week: (() => {
-      const w = [], today = days[new Date().getDay()];
-      if (today === 'Saturday') {
-        w.push(...days)
-      } else {
-        w.push(...([...days].splice(days.indexOf(today)+1).concat(days)))
-      }
-      
-      return w
-    })(),  
-    weekWeather: JSON.parse(sessionStorage.getItem('week_weather')) || [{}],
-    isChangingLocation: false,
-    canShowContent: !!sessionStorage.getItem('address'),
-  }), [days,timezone]);
 
   const [state,dispatch] = useReducer(reducer, initialState);
 

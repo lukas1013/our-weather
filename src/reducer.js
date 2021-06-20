@@ -1,4 +1,33 @@
-export default function reducer(state, action) {
+import getHours from "./utils/getHours";
+import * as storage from './storage';
+
+const days = ['Sunday','Monday','Tuesday','Wednesday','Thusday','Friday','Saturday'];
+
+const initialState = ({
+    address: storage.retrieve('address'),
+    coordinates: JSON.parse(storage.retrieve('coords')),
+    timeZone: storage.retrieve('timeZone'),
+    time: (() => getHours())(),
+    days: ['Sunday','Monday','Tuesday','Wednesday','Thusday','Friday','Saturday'],
+    today: (() => days[new Date().getDay()])(),
+    week: (() => {
+      const newWeek = [], today = days[new Date().getDay()];
+      if (today === 'Saturday') {
+        newWeek.push(...days)
+      } else {
+        const w = days.slice(days.indexOf(today) + 1)
+        w.push(...(days.slice(0, days.indexOf(today) + 1)))
+        newWeek.push(...w)
+      }
+      
+      return newWeek
+    })(),  
+    weekWeather: JSON.parse(storage.retrieve('week_weather')) || [{}],
+    isChangingLocation: false,
+    canShowContent: storage.retrieve('address') || storage.retrieve('week_weather'),
+  });
+
+function reducer(state, action) {
     const newState = {...state};
     
     console.log(action.type)
@@ -28,17 +57,17 @@ export default function reducer(state, action) {
             break
         // case 'setTime':
         default:
-            const locale = sessionStorage.getItem('lang'), timezone = newState.timezone
-            const options = { hour: '2-digit', minute: '2-digit' }
-            
-            if (timezone) {
-                options.timeZone = timezone
-            }
-            newState.time = new Intl.DateTimeFormat(locale || navigator.language, options).format(new Date())
-            if (newState.time === '00:00' && newState.today !== newState.days[new Date().getDay()]) {
+            newState.time = getHours()
+            if (/00:00|12:00 AM/.test(newState.time) && newState.today !== newState.days[new Date().getDay()]) {
                 newState.today = newState.days[new Date().getDay()]
+                const { week }  = newState
+                // take the first value and put it at the end
+                week.push(week.shift());
+                newState.week = week
             }
     }
 
     return {...newState}
 }
+
+export { reducer as default, initialState }
