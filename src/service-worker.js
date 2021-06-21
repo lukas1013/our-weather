@@ -11,7 +11,8 @@ import { clientsClaim } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
-import { CacheFirst } from 'workbox-strategies';
+import { CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
+import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 
 clientsClaim();
 
@@ -46,6 +47,16 @@ registerRoute(
   createHandlerBoundToURL(process.env.PUBLIC_URL + '/index.html')
 );
 
+registerRoute(({ request }) => 
+  /style|script|worker/.test(request.destination),
+  new StaleWhileRevalidate({
+    cacheName: 'scripts',
+    plugins: [
+      new CacheableResponsePlugin({ statuses: [200] })
+    ]
+})
+);
+
 // An example runtime caching route for requests that aren't handled by the
 // precache, in this case same-origin .png requests like those from in public/
 registerRoute(
@@ -56,7 +67,11 @@ registerRoute(
     plugins: [
       // Ensure that once this runtime cache reaches a maximum size the
       // least-recently used images are removed.
-      new ExpirationPlugin({ maxEntries: 50 }),
+      new ExpirationPlugin({ 
+        maxEntries: 10,
+        maxAgeSeconds: 60 * 60 * 24 * 30
+      }),
+      new CacheableResponsePlugin({ statuses: [200,304] })
     ],
   })
 );
