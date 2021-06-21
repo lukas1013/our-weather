@@ -35,7 +35,8 @@
     "we de wi" 1fr
     / .7fr 1fr 1fr;
   color: #fff;
-  width: 60%;
+  width: auto;
+  max-width: 90%;
   justify-items: start;
   align-items: center;
   box-sizing: border-box;
@@ -43,7 +44,7 @@
   box-shadow: 0 2px 5px rgba(0,0,0,.3);
   margin: 10% 0;
   column-gap: 1%;
-  flex: 0 0 auto;
+  flex: 1 0 content;
   font-size: 1.3rem;
   padding: .5%;
   font-family: 'Open Sans Condensed', sans-serif;
