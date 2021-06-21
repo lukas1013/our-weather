@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useCallback, lazy, Suspense, useReducer } from 'react';
 import * as geocodeApi from './services/geocode';
 import * as weatherApi from './services/weather';
-import ISO6391 from 'iso-639-1';
 import reducer, { initialState } from './reducer';
 import './App.css';
+import * as storage from './storage';
+import getHours from './utils/getHours';
 
 const WeatherIcon = lazy(() => import('./components/WeatherIcon'));
 const WeekWeather = lazy(() => import('./components/WeekWeather'));
@@ -19,9 +20,7 @@ function App() {
   const [state,dispatch] = useReducer(reducer, initialState);
 
   const clock = useCallback(() => {
-    const timer = setInterval(() => {
-      dispatch({ type: 'setTime' })
-    }, 1000);
+    const timer = setInterval(() => dispatch({ type: 'setTime' }), 1000);
     
     return () => clearInterval(timer);
   }, []);
@@ -29,7 +28,6 @@ function App() {
   const getWeekWeather = useCallback(async () => {
     if (state.coordinates?.latitude) {
       return await weatherApi.getWeekWeather(state.coordinates, lang).then(weWeather => {
-        sessionStorage.setItem('week_weather', JSON.stringify(weWeather))
         return weWeather
       }).catch(e => console.log(e))
     } 
@@ -44,10 +42,6 @@ function App() {
           const { latitude, longitude } = coords
           const address = await geocodeApi.getReverseGeocode({ latitude, longitude });
           const weekWeather = await getWeekWeather()
-          sessionStorage.setItem('coords', JSON.stringify(coords))
-          sessionStorage.setItem('address', address);
-          sessionStorage.setItem('week_weather', JSON.stringify(weekWeather))
-          console.log(weekWeather)
           dispatch({
             type: 'init',
             value: { coords, address, weekWeather }
@@ -64,11 +58,6 @@ function App() {
         geocodeApi.getGeocode(state.newLocation.replace(/[\s,]/g, '+')).then(response => {
           const [ coords, address ] = response;
           return weatherApi.getLocalizationWeather(coords, lang).then(weWeather => {
-            sessionStorage.setItem('address', `${address.city}, ${address.stateCode || address.countryCode}`)
-            sessionStorage.setItem('coords', JSON.stringify(coords))
-            sessionStorage.setItem('lang', ISO6391.getCode(address.city || address.state))
-            sessionStorage.setItem('timeZone', weWeather[0].timeZone);
-            sessionStorage.setItem('week_weather', JSON.stringify(weWeather));
             dispatch({ 
               type: 'change location', value: { 
                 weekWeather: weWeather,
@@ -83,7 +72,11 @@ function App() {
   }, [lang, state.newLocation]);
 
   const canShowContentFunc = useCallback(async () => {
-    const coords = JSON.parse(sessionStorage.getItem('coords')), weWeather = JSON.parse(sessionStorage.getItem('week_weather'))
+    if (state.canShowContent) {
+      return false
+    }
+    
+    const coords = JSON.parse(storage.retrieve('coords')), weWeather = JSON.parse(storage.retrieve('weekWeather'))
     const hasCoordinates = (coords instanceof Object && Object.keys(coords).length), hasWeekWeather = (weWeather instanceof Array && weWeather.length);
 
     if (hasCoordinates || hasWeekWeather) {
@@ -103,18 +96,25 @@ function App() {
       dispatch({ type: 'can show content', value: canShowContent })
     }
 
-  },[]);
+  },[state.canShowContent]);
+
+  useEffect(() => {
+    if (storage.alreadyExpired(getHours())) {
+      storage.clearStorage()
+      init()
+    }
+  }, [init]);
 
   useEffect(() => {
     canShowContentFunc()
   }, [canShowContentFunc]);
 
   useEffect(() => {
-    if (!state.weekWeather[0].temp) {
+    if (!state.weekWeather[0].temp || !state.address) {
       init()
     }
     return false
-  }, [state.weekWeather, init])
+  }, [state.weekWeather, state.address, init])
   
   useEffect(() => {
     clock()
