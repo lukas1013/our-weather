@@ -48,31 +48,12 @@
     font-size: .9em;
   }
 
-  @media script and (min-width: 800px) {
+  @media screen and (min-width: 450px) {
     #week {
-        width: 60%;
-        margin-bottom: 5%;
-      }
-    
-      #week-content {
-        width: 100%;
-        max-width: 600px;
-      }
-      
-      #week-content .day {
-        font-size: 1.5rem;
-      }
-    
-      #week-content .degrees {
-        font-size: 1.4rem;
-      }
-  }
-
-  @media screen and (max-width: 450px) {
-    #week-content .day > .long {
-      display: none;
+      width: 90%;
+      max-width: 560px;
     }
-  
+
     #week-content .weather-container {
       height: 2.2rem;
     }
@@ -89,10 +70,34 @@
       font-size: 1.3rem;
     }
   }
+
+  @media screen and (min-width: 800px) {
+      #week {
+        max-width: 600px;
+        margin-bottom: 5%;
+      }
+    
+      #week-content {
+        width: 100%;
+        max-width: 600px;
+      }
+      
+      #week-content .day {
+        font-size: 1.5rem;
+      }
+    
+      #week-content .degrees {
+        font-size: 1.4rem;
+      }
+  }
   
-  @media screen and (max-width: 330px) {
+  @media screen and (max-width: 360px) {
     #week {
       width: 90%;
+    }
+
+    #week-content .day > .long {
+      display: none;
     }
     
     #week-content {
