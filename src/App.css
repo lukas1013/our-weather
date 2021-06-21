@@ -35,8 +35,7 @@
     "we de wi" 1fr
     / .7fr 1fr 1fr;
   color: #fff;
-  width: auto;
-  max-width: 90%;
+  width: 70%;
   justify-items: start;
   align-items: center;
   box-sizing: border-box;
@@ -45,13 +44,13 @@
   margin: 10% 0;
   column-gap: 1%;
   flex: 1 0 content;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   padding: .5%;
   font-family: 'Open Sans Condensed', sans-serif;
 }
 
 #local-and-time {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 600;
   font-family: 'Lora', serif;
   grid-area: lt;
@@ -139,6 +138,35 @@
   color: inherit;
 }
 
+@media screen and (min-width: 450px) {
+  #title {
+    font-size: 2.4rem;
+  }
+  
+  .App-content {
+    width: 64%;
+    max-width: 370px;
+    font-size: 1.3rem;
+  }
+  
+  #local-and-time {
+    font-size: 1.6rem;
+  }
+
+  #change-location {
+    font-size: 1.3rem;
+  }
+
+  #address-ipt {
+    font-size: 1.2rem;
+    line-height: 2rem;
+  }
+  
+  #icon-author {
+    font-size: 1.3rem;
+  }
+}
+
 @media screen and (min-width: 800px) {
   .App-content {
     max-width: 400px;
@@ -167,72 +195,10 @@
   }
 }
 
-@media screen and (max-width: 450px) {
-  #title {
-    font-size: 2.4rem;
-  }
-  
-  .App-content {
-    font-size: 1.2rem;
-  }
-  
-  #local-and-time {
-    font-size: 1.5rem;
-  }
-
-  #week-content .day > .long {
-    display: none;
-  }
-
-  #week-content .weather-container {
-    height: 2.2rem;
-  }
-
-  #week-content .weather {
-    width: 2.2rem;
-  }
-
-  #week-content .degrees {
-    font-size: 1.2rem;
-  }
-
-  #week-content .desc {
-    font-size: 1.3rem;
-  }
-
-  #change-location {
-    font-size: 1.3rem;
-  }
-
-  #address-ipt {
-    font-size: 1.2rem;
-    line-height: 2rem;
-  }
-  
-  #icon-author {
-    font-size: 1.3rem;
-  }
-}
-
 @media screen and (max-width: 330px) {
   .App-content {
     width: 80%;
   }
-  
-  #week {
-    width: 90%;
-  }
-  
-  #week-content {
-    padding: 1%;
-    width: 140%;
-  }
-
-  #week-content .day,
-  #week-content td {
-    padding: 1%;
-    box-sizing: border-box;
-  } 
 
   #change-location {
     width: 50%;
