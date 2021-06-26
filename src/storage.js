@@ -1,4 +1,4 @@
-import getHours from "./utils/getHours";
+import { getHours, isAfter, setMinutes } from './helpers/dateAndTime';
 
 function save(entry, value, persist = true) {
     const storage = persist ? localStorage : sessionStorage;
@@ -30,51 +30,21 @@ function retrieve(entry) {
 }
 
 function setExpirationTime(expiresIn = 30, currentTime = getHours(retrieve('locale'),retrieve('timeZone'))) {
-    let [hour,minute,period] = currentTime.split(/:|\s/);
-    hour = parseInt(hour)
-    minute = parseInt(minute)
-    for (let i = 0; i < expiresIn; i++) {
-        if (hour === 12 && period && minute === 59) {
-            hour = 1
-            minute = 0
-            continue
-        }
-
-        if (minute === 59) {
-            hour = hour === 23 ? 0 : hour + 1; 
-            minute = 0
-            continue
-        }
-
-        minute += 1
-    }
-    // 2-digit format
-    hour = hour < 10 ? '0' + hour : hour;
-    minute = minute < 10 ? '0' + minute : minute;
-    const expirationTime = { hour: `${hour}:${minute}${period ? ' ' + period : ''}` };
-    expirationTime.day = new Date().getDate();
+    const hour = setMinutes(expiresIn, currentTime)
+    const expirationTime = { hour, day: new Date().getDate() };
     save('expirationTime', JSON.stringify(expirationTime), true)
 }
 
-function alreadyExpired(currentTime) {
+function alreadyExpired(currentHour = getHours()) {
     try {
         const expirationTime = JSON.parse(retrieve('expirationTime'));
-
+        
         if (!expirationTime) {
             return false
         }
-
-        const [expirationHour, expiratioMinute] = expirationTime.hour.split(/:|\s/), [currentHour, currentMinute] = currentTime.split(/:|\s/);
-        let hasExpired = false
         
-        if (new Date().getDate() > expirationTime.day) {
-            hasExpired = true
-        } else if (expirationHour === currentHour && parseInt(currentMinute) > parseInt(expiratioMinute)) {
-            hasExpired = true
-        } else if (parseInt(currentHour) > parseInt(expirationHour)) {
-            hasExpired = true
-        }
-
+        const hasExpired = isAfter({ hour: currentHour, day: new Date().getDate() }, expirationTime)
+        
         return hasExpired
     } catch(e) {
         console.log(e)
