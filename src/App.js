@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useCallback, lazy, Suspense, useReducer } from 'react';
+import { IoMdRefreshCircle } from 'react-icons/io';
 import * as geocodeApi from './services/geocode';
 import * as weatherApi from './services/weather';
 import reducer, { initialState } from './reducer';
@@ -98,6 +99,10 @@ function App() {
 
   },[state.canShowContent]);
 
+  const updateLocation = useCallback(() => {
+    dispatch({ type: 'reset' })
+  },[])
+
   useEffect(() => {
     if (storage.alreadyExpired(getHours())) {
       storage.clearStorage()
@@ -130,6 +135,10 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1 id="title" translate="no">Our Weather</h1>
+
+        <button id="update" onClick={updateLocation} title="Update location">
+          <IoMdRefreshCircle />
+        </button>
       </header>
 
     {!state.canShowContent && <span id="geolocation-denied-msg">
