@@ -6,11 +6,7 @@ import config from '../config/';
 async function getWeekWeather(coords, lang = 'en_US') {
     const URL = config.weather.api;
     const APPID = config.weather.appid;
-
-    if (!coords?.latitude) {
-        return [{}]
-    }
-
+    
     function captalize(string) {
         const firstLetter = string.charAt(0)
         return string.replace(firstLetter, firstLetter.toUpperCase())

@@ -27,11 +27,9 @@ async function getReverseGeocode(coords) {
            apikey: APIKEY
         },
     }).then(({ data }) => {
-        const { address: responseAddress } = data.items[0]
-        const address = responseAddress.city + ', ' + responseAddress.state
         try {
-            sessionStorage.setItem('address', address)
-            sessionStorage.setItem('coords', JSON.stringify(coords))
+            const { address: responseAddress } = data.items[0]
+            const address = responseAddress.city + ', ' + responseAddress.state
             return address
         } catch (e) {
             console.log(e.message)
