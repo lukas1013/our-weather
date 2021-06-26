@@ -5,7 +5,6 @@ import * as weatherApi from './services/weather';
 import reducer, { initialState } from './reducer';
 import './App.css';
 import * as storage from './storage';
-import getHours from './utils/getHours';
 
 const WeatherIcon = lazy(() => import('./components/WeatherIcon'));
 const WeekWeather = lazy(() => import('./components/WeekWeather'));
