@@ -25,9 +25,10 @@ function App() {
     return () => clearInterval(timer);
   }, []);
 
-  const getWeekWeather = useCallback(async () => {
-    if (state.coordinates?.latitude) {
-      return await weatherApi.getWeekWeather(state.coordinates, lang).then(weWeather => {
+  const getWeekWeather = useCallback(async (coords) => {
+    if (coords?.latitude || state.coordinates?.latitude) {
+      const coordinates = coords?.latitude ? coords : state.coordinates
+      return await weatherApi.getWeekWeather(coordinates, lang).then(weWeather => {
         return weWeather
       }).catch(e => console.log(e))
     } 
@@ -41,7 +42,7 @@ function App() {
         try {
           const { latitude, longitude } = coords
           const address = await geocodeApi.getReverseGeocode({ latitude, longitude });
-          const weekWeather = await getWeekWeather()
+          const weekWeather = await getWeekWeather(coords)
           dispatch({
             type: 'init',
             value: { coords, address, weekWeather }
@@ -49,7 +50,7 @@ function App() {
         } catch (err) {
           return console.log(err.message);
         }
-      }, err => console.log(err.message), { enableHighAccuracy: true, timeout: 1000 * 5, maximumAge: 0 })
+      }, err => console.log(err.message), { enableHighAccuracy: true, timeout: 1000 * 10, maximumAge: 0 })
     }
   }, [getWeekWeather]);
 
@@ -84,7 +85,7 @@ function App() {
     }
 
     const permission = await navigator.permissions.query({ name: 'geolocation' })
-    let canShowContent = false, isGeolocationDenied = 0
+    let isGeolocationDenied = 0
 
     if (permission.state === 'granted') {
       isGeolocationDenied = 2
@@ -92,9 +93,7 @@ function App() {
       isGeolocationDenied = 1
     }
 
-    if (isGeolocationDenied === 2) {
-      dispatch({ type: 'can show content', value: canShowContent })
-    }
+    dispatch({ type: 'can show content', value: isGeolocationDenied === 2 ? true : false })
 
   },[state.canShowContent]);
 
@@ -103,22 +102,25 @@ function App() {
   },[])
 
   useEffect(() => {
-    if (storage.alreadyExpired(getHours())) {
-      storage.clearStorage()
-      init()
+    if (storage.alreadyExpired()) {
+      dispatch({ type: 'reset' })
     }
-  }, [init]);
+  }, []);
 
   useEffect(() => {
-    canShowContentFunc()
-  }, [canShowContentFunc]);
+    if (!state.canShowContent) {
+      const canShowContentInterval = setInterval(() => canShowContentFunc(), 1000);
+
+      return () => clearInterval(canShowContentInterval)
+    }
+  }, [state.canShowContent ,canShowContentFunc]);
 
   useEffect(() => {
-    if (!state.weekWeather[0].temp || !state.address) {
+    if (!state.weekWeather[0]?.temp && !state.address && !state.coordinates?.latitude && state.canShowContent) {
       init()
     }
     return false
-  }, [state.weekWeather, state.address, init])
+  }, [state.weekWeather, state.address, state.coordinates, state.canShowContent, init])
   
   useEffect(() => {
     clock()

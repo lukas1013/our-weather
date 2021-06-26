@@ -25,12 +25,12 @@ const initialState = ({
     weekWeather: JSON.parse(storage.retrieve('weekWeather')) || [{}],
     isChangingLocation: false,
     canShowContent: storage.retrieve('address') || storage.retrieve('weekWeather'),
+    lastUpdate: null
   });
 
 function reducer(state, action) {
     const newState = {...state};
     
-    console.log(action.type)
     switch (action.type) {
         case 'init':
             newState.address = action.value.address
@@ -61,7 +61,7 @@ function reducer(state, action) {
             break
         case 'reset':
             storage.clearStorage()
-            storage.setLastUpdate()
+            storage.save('last update', getHours())
             newState.weekWeather = [{}]
             newState.address = null
             newState.coordinates = {}
