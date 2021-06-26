@@ -61,6 +61,14 @@ function reducer(state, action) {
         case 'can show content':
             newState.canShowContent = action.value
             break
+        case 'reset':
+            storage.clearStorage()
+            storage.setLastUpdate()
+            newState.weekWeather = [{}]
+            newState.address = null
+            newState.coordinates = {}
+            newState.canShowContent = false
+            break
         // case 'setTime':
         default:
             newState.time = getHours(newState.locale,newState.timeZone)

@@ -14,12 +14,44 @@
   width: 100%;
   box-sizing: border-box;
   padding: 1%;
+  display: grid;
+  grid-template: ". ti re" 1fr / 10% 80% 10%;
 }
 
 #title {
   margin: 0;
   text-align: center;
   font-size: 2.8rem;
+  grid-area: ti;
+}
+
+#update {
+  border: none;
+  border-radius: .3rem;
+  padding: 0;
+  background-color: transparent;
+  line-height: 2rem;
+  grid-area: re;
+  width: 100%;
+  height: 100%;
+  align-self: center;
+  margin: 0;
+  outline: none;
+}
+
+#update svg {
+  width: auto;
+  height: 100%;
+  object-fit: contain;
+  color: #E51A4C;
+  background-image: radial-gradient(circle, #fff 30%, #282c34 50%);
+  box-sizing: border-box;
+  float: right;
+}
+
+#update:hover {
+  transition: color .3s;
+  color: var(--text-color);
 }
 
 #geolocation-denied-msg {
@@ -90,7 +122,7 @@
   text-align: center;
   box-shadow: 0 0 3px rgba(0,0,0,.4);
   text-decoration: underline #E51A4C;
-  margin-bottom: 3%;
+  margin: 3% 0;
   box-sizing: border-box;
   align-self: center;
   border: none;
