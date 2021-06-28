@@ -72,31 +72,6 @@ function App() {
       }
   }, [lang, state.newLocation]);
 
-  const canShowContentFunc = useCallback(async () => {
-    if (state.canShowContent) {
-      return false
-    }
-    
-    const coords = JSON.parse(storage.retrieve('coords')), weWeather = JSON.parse(storage.retrieve('weekWeather'))
-    const hasCoordinates = (coords instanceof Object && Object.keys(coords).length), hasWeekWeather = (weWeather instanceof Array && weWeather.length);
-
-    if (hasCoordinates || hasWeekWeather) {
-      return dispatch({ type: 'can show content', value: true });
-    }
-
-    const permission = await navigator.permissions.query({ name: 'geolocation' })
-    let isGeolocationDenied = 0
-
-    if (permission.state === 'granted') {
-      isGeolocationDenied = 2
-    } else if (permission.state === 'denied') {
-      isGeolocationDenied = 1
-    }
-
-    dispatch({ type: 'can show content', value: isGeolocationDenied === 2 ? true : false })
-
-  },[state.canShowContent]);
-
   const updateLocation = useCallback(() => {
     dispatch({ type: 'reset' })
   },[])
@@ -108,19 +83,18 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!state.canShowContent) {
-      const canShowContentInterval = setInterval(() => canShowContentFunc(), 1000);
-
-      return () => clearInterval(canShowContentInterval)
+    const hasData = state.weekWeather[0]?.temp && state.address && state.coordinates?.latitude
+    if (hasData) {
+      return false
     }
-  }, [state.canShowContent ,canShowContentFunc]);
 
-  useEffect(() => {
-    if (!state.weekWeather[0]?.temp && !state.address && !state.coordinates?.latitude && state.canShowContent) {
-      init()
-    }
+    navigator.permissions.query({ name: 'geolocation' }).then(permission => {
+      if (permission !== 'denied') {
+        init()
+      }
+    })
     return false
-  }, [state.weekWeather, state.address, state.coordinates, state.canShowContent, init])
+  }, [state.weekWeather, state.address, state.coordinates, init])
   
   useEffect(() => {
     clock()

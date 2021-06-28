@@ -56,9 +56,6 @@ function reducer(state, action) {
         case 'typing new location':
             newState.newLocation = action.value
             break
-        case 'can show content':
-            newState.canShowContent = action.value
-            break
         case 'reset':
             storage.clearStorage()
             storage.save('last update', getHours())
