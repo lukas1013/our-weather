@@ -15,9 +15,11 @@ function WeatherIcon(props) {
     return (
         <img id={props.id}
          className={props.className} 
+         title={props.title} 
+         alt=""
          aria-labelledby={props['aria-labelledby']} 
          tabIndex={props.tabIndex}
-         src={iconSrc} title={props.title} 
+         src={iconSrc}
         />
     )
 }

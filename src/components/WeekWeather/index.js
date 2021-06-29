@@ -26,7 +26,7 @@ function WeekWeather(props) {
                             const index = key === 0 ? 3 : 5 + (key - 1) * 4 + 1
                             return (
                                 <td key={key} className="weather-container">
-                                    {item.icon && <WeatherIcon tabIndex={index} className="weather" title={item.title} aria-labelledby={'desc' + (key + 1)} icon={item.icon} iconId={item.iconId} />}
+                                    {item.icon && <WeatherIcon tabIndex={index} className="weather" title={item.desc} aria-labelledby={'desc' + (key + 1)} icon={item.icon} iconId={item.iconId} />}
                                 </td>
                             )
                         })}
